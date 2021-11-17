@@ -1,0 +1,44 @@
+<html>
+<body>
+<p>
+    This inspection reports when the <code>Interpolations#s</code> function is used with
+    wrong string value. Only string literal value is supported at this place.
+</p>
+<p>
+<pre><code>
+    // incorrect
+    class Foo {
+        void foo() {
+            var result = Interpolations.s(null);
+        }
+    }
+
+    // incorrect
+    class Foo {
+        void foo() {
+            var result = Interpolations.s("hello" + "world");
+        }
+    }
+
+    // incorrect
+    class Foo {
+        void foo() {
+            var tmp = "template";
+            var result = Interpolations.s(tmp);
+        }
+    }
+</code></pre>
+</p>
+<p>
+<pre><code>
+    // correct
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var result = Interpolations.s("Hello ${name}");
+        }
+    }
+</code></pre>
+</p>
+</body>
+</html>

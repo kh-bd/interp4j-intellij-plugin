@@ -8,6 +8,17 @@
     <depends>com.intellij.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <localInspection
+                language="JAVA"
+                enabledByDefault="true"
+                level="ERROR"
+                groupBundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                groupKey="inspections"
+                groupPath="Java"
+                bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                key="inspection.interpolated.string"
+                shortName="InterpolatedStringInspection"
+                implementationClass="dev.khbd.interp4j.intellij.inspection.InterpolatedStringInspection"/>
     </extensions>
 
 </idea-plugin>
