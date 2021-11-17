@@ -20,7 +20,6 @@ import java.util.Objects;
  */
 public class InterpolatedStringInspection extends LocalInspectionTool {
 
-
     @Override
     public PsiElementVisitor buildVisitor(ProblemsHolder holder, boolean isOnTheFly) {
         return new SMethodInvocationVisitor(holder);
