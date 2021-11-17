@@ -1,0 +1,13 @@
+<idea-plugin>
+    <id>dev.khbd.interp4j-intellij-plugin</id>
+    <name>Interp4j</name>
+    <vendor email="khadanovich.sergey@gmail.com">Khadanovich Sergei</vendor>
+
+    <description>Plugin to add must-have features for projects which use interp4j library</description>
+
+    <depends>com.intellij.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+
+</idea-plugin>
