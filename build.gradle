@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "6.2.0"
+    id 'org.jetbrains.intellij' version '0.7.3'
+}
+
+group 'dev.khbd.interp4j'
+version baseVersion() + "_" + intellijVersion()
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'dev.khbd.interp4j', name: 'interp4j-core', version: interp4j_version
+    implementation group: 'dev.khbd.interp4j', name: 'interp4j-processor', version: interp4j_version
+
+    testImplementation group: 'org.testng', name: 'testng', version: '6.13.1'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
+}
+
+intellij {
+    version = intellijVersion()
+    plugins = ['com.intellij.java']
+}
+
+def intellijVersion() {
+    System.getenv().getOrDefault('INTELLIJ_VERSION', intellij_version)
+}
+
+def baseVersion() {
+    System.getenv().getOrDefault('BASE_VERSION', base_version)
+}
+
+publishPlugin {
+    token = System.getenv("INTELLIJ_PUBLISH_TOKEN")
+}
+
+def loadHtml(String fileName) {
+    file(fileName).text.replace('<html>', '').replace('</html>', '')
+}
+
+patchPluginXml {
+    changeNotes = loadHtml("change-notes.html")
+    pluginDescription = loadHtml("description.html")
+}
+
+task libs(type: Sync) {
+    from configurations.compileClasspath
+    into "$buildDir/lib"
+    include 'interp4j-core-' + interp4j_version + '.jar'
+    include 'interp4j-processor-' + interp4j_version + '.jar'
+    rename 'interp4j-core-' + interp4j_version, 'interp4j-core'
+    rename 'interp4j-processor-' + interp4j_version, 'interp4j-processor'
+}
+
+test.dependsOn(libs)
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+    useTestNG()
+}

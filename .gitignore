@@ -1,0 +1,7 @@
+.gradle
+out
+build
+
+.idea
+
+.java-version
