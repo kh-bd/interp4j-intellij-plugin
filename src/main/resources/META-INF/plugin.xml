@@ -19,6 +19,8 @@
                 key="inspection.interpolated.string"
                 shortName="InterpolatedStringInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.InterpolatedStringInspection"/>
+
+        <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.InterpolatedStringLanguageInjector"/>
     </extensions>
 
 </idea-plugin>
