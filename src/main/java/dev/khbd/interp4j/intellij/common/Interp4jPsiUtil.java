@@ -3,6 +3,7 @@ package dev.khbd.interp4j.intellij.common;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
@@ -56,6 +57,27 @@ public class Interp4jPsiUtil {
         }
 
         return (String) value;
+    }
+
+    /**
+     * Check is supplied expression part of `s` method call.
+     *
+     * @param literalExpression literal expression
+     * @return {@literal true} if supplied expression is actual parameter of `s` method invocation
+     * and {@literal false} otherwise
+     */
+    public static boolean insideSMethodCall(@NonNull PsiLiteralExpression literalExpression) {
+        PsiElement mayBeExpressionList = literalExpression.getParent();
+        if (!(mayBeExpressionList instanceof PsiExpressionList)) {
+            return false;
+        }
+        PsiExpressionList expressionList = (PsiExpressionList) mayBeExpressionList;
+        PsiElement mayBeMethodCall = expressionList.getParent();
+        if (!(mayBeMethodCall instanceof PsiMethodCallExpression)) {
+            return false;
+        }
+        PsiMethodCallExpression methodCall = (PsiMethodCallExpression) mayBeMethodCall;
+        return Interp4jPsiUtil.isSMethodCall(methodCall);
     }
 
     private boolean isSMethod(PsiMethod method) {
