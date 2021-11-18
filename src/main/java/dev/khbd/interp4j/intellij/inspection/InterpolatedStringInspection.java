@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiExpressionList;
-import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
@@ -48,22 +47,10 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
                 return;
             }
 
-            PsiExpression argument = arguments.getExpressions()[0];
-            if (!(argument instanceof PsiLiteralExpression)) {
-                onlyStringLiteralValueIsSupported(argument);
-                return;
-            }
-
-            PsiLiteralExpression literalExpression = (PsiLiteralExpression) argument;
-
-            Object value = literalExpression.getValue();
+            PsiExpression firstExpression = arguments.getExpressions()[0];
+            String value = Interp4jPsiUtil.getStringLiteralValue(firstExpression);
             if (Objects.isNull(value)) {
-                onlyStringLiteralValueIsSupported(literalExpression);
-                return;
-            }
-
-            if (!(value instanceof String)) {
-                onlyStringLiteralValueIsSupported(literalExpression);
+                onlyStringLiteralValueIsSupported(firstExpression);
             }
         }
 
