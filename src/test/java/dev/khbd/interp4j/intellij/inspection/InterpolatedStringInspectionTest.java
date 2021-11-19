@@ -16,7 +16,14 @@ public class InterpolatedStringInspectionTest extends BaseIntellijTest {
 
     @Test
     public void inspect_wrongInterpolatedString_verifyError() {
-        fixture.configureByFiles("inspection/wrong_string/Main.java");
+        fixture.configureByFiles("inspection/non_literal/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
+    @Test
+    public void inspect_string_without_any_expression_verifyWarn() {
+        fixture.configureByFiles("inspection/without_any_expression/Main.java");
 
         fixture.testHighlighting(true, false, true);
     }

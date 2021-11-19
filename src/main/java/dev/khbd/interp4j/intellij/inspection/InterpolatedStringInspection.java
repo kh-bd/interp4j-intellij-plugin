@@ -10,9 +10,14 @@ import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiMethodCallExpression;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
+import dev.khbd.interp4j.processor.s.expr.ExpressionPart;
+import dev.khbd.interp4j.processor.s.expr.SExpression;
+import dev.khbd.interp4j.processor.s.expr.SExpressionParser;
+import dev.khbd.interp4j.processor.s.expr.SExpressionVisitor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author Sergei_Khadanovich
@@ -51,14 +56,56 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
             String value = Interp4jPsiUtil.getStringLiteralValue(firstExpression);
             if (Objects.isNull(value)) {
                 onlyStringLiteralValueIsSupported(firstExpression);
+                return;
             }
+
+            SExpressionParser.getInstance().parse(value)
+                    .ifPresentOrElse(inspectParsed(methodCall), unpassableExpression());
+        }
+
+        private Consumer<SExpression> inspectParsed(PsiMethodCallExpression methodCall) {
+            return sExpr -> {
+                if (!existAnyExpressionPart(sExpr)) {
+                    interpolationWithoutExpression(methodCall);
+                }
+            };
+        }
+
+        private boolean existAnyExpressionPart(SExpression sExpr) {
+            ExpressionsCounter counter = new ExpressionsCounter();
+            sExpr.visit(counter);
+            return counter.count > 0;
+        }
+
+        private void interpolationWithoutExpression(PsiMethodCallExpression methodCall) {
+            holder.registerProblem(
+                    methodCall,
+                    Interp4jBundle.getMessage("inspection.interpolated.string.no.one.expression.found"),
+                    ProblemHighlightType.WARNING
+            );
+        }
+
+        private Runnable unpassableExpression() {
+            return () -> {
+            };
         }
 
         private void onlyStringLiteralValueIsSupported(PsiExpression expression) {
-            holder.registerProblem(expression,
+            holder.registerProblem(
+                    expression,
                     Interp4jBundle.getMessage("inspection.interpolated.string.is.not.string.literal"),
                     ProblemHighlightType.GENERIC_ERROR
             );
+        }
+    }
+
+    private static class ExpressionsCounter implements SExpressionVisitor {
+
+        private int count = 0;
+
+        @Override
+        public void visitExpressionPart(ExpressionPart expressionPart) {
+            count++;
         }
     }
 }

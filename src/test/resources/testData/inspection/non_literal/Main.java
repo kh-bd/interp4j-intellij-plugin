@@ -1,4 +1,4 @@
-package inspection.wrong_string;
+package inspection.non_literal;
 
 import static dev.khbd.interp4j.core.Interpolations.s;
 
