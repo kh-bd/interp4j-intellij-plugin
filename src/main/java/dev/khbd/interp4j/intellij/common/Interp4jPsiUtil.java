@@ -8,6 +8,7 @@ import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import dev.khbd.interp4j.core.Interpolations;
+import dev.khbd.interp4j.core.internal.s.SInterpolator;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -20,8 +21,6 @@ import java.util.Objects;
 @UtilityClass
 public class Interp4jPsiUtil {
 
-    private static final String S_METHOD_NAME = "s";
-
     /**
      * Check is supplied method call a 's' method call.
      *
@@ -30,7 +29,20 @@ public class Interp4jPsiUtil {
      */
     public static boolean isSMethodCall(@NonNull PsiMethodCallExpression methodCall) {
         PsiMethod originalMethod = methodCall.resolveMethod();
-        return Objects.nonNull(originalMethod) && isSMethod(originalMethod);
+        return Objects.nonNull(originalMethod)
+                && isMethodFromClassWithName(originalMethod, "s", Interpolations.class);
+    }
+
+    /**
+     * Check is supplied method call a 'interpolate' method call.
+     *
+     * @param methodCall method call
+     * @return {@literal true} if it is a 'interpolate' method call and {@literal false} otherwise
+     */
+    public static boolean isInterpolateMethodCall(@NonNull PsiMethodCallExpression methodCall) {
+        PsiMethod originalMethod = methodCall.resolveMethod();
+        return Objects.nonNull(originalMethod)
+                && isMethodFromClassWithName(originalMethod, "interpolate", SInterpolator.class);
     }
 
     /**
@@ -80,8 +92,8 @@ public class Interp4jPsiUtil {
         return Interp4jPsiUtil.isSMethodCall(methodCall);
     }
 
-    private boolean isSMethod(PsiMethod method) {
-        if (!method.getName().equals(S_METHOD_NAME)) {
+    private boolean isMethodFromClassWithName(PsiMethod method, String name, Class<?> clazz) {
+        if (!method.getName().equals(name)) {
             return false;
         }
         PsiElement parent = method.getParent();
@@ -89,6 +101,6 @@ public class Interp4jPsiUtil {
             return false;
         }
         PsiClass psiClass = (PsiClass) parent;
-        return Interpolations.class.getCanonicalName().equals(psiClass.getQualifiedName());
+        return clazz.getCanonicalName().equals(psiClass.getQualifiedName());
     }
 }

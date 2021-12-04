@@ -1,0 +1,30 @@
+<html>
+<body>
+<p>
+    This inspection reports when the <code>SInterpolator#interpolate</code> function is used
+    manually.
+</p>
+<p>
+<pre><code>
+    // incorrect
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var result = new SInterpolator("hello, ", "").interpolate(name);
+        }
+    }
+</code></pre>
+</p>
+<p>
+<pre><code>
+    // correct
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var result = s("hello, $name");
+        }
+    }
+</code></pre>
+</p>
+</body>
+</html>
