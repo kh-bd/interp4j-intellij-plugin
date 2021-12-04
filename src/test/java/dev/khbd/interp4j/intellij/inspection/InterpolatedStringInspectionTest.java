@@ -1,8 +1,13 @@
 package dev.khbd.interp4j.intellij.inspection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.intellij.codeInsight.intention.IntentionAction;
 import dev.khbd.interp4j.intellij.BaseIntellijTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * @author Sergei_Khadanovich
@@ -26,5 +31,9 @@ public class InterpolatedStringInspectionTest extends BaseIntellijTest {
         fixture.configureByFiles("inspection/without_any_expression/Main.java");
 
         fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(2);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/without_any_expression/Main_after.java");
     }
 }

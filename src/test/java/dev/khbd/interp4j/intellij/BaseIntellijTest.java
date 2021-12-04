@@ -1,5 +1,6 @@
 package dev.khbd.interp4j.intellij;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
@@ -16,6 +17,7 @@ import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -91,5 +93,11 @@ public abstract class BaseIntellijTest {
             }
         });
         return future.get(1L, TimeUnit.SECONDS);
+    }
+
+    protected void launchActions(List<IntentionAction> actions) {
+        for (IntentionAction action : actions) {
+            fixture.launchAction(action);
+        }
     }
 }
