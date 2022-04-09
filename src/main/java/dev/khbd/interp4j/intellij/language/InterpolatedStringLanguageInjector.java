@@ -5,13 +5,17 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiPolyadicExpression;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
 import dev.khbd.interp4j.processor.s.expr.ExpressionPart;
 import dev.khbd.interp4j.processor.s.expr.SExpression;
 import dev.khbd.interp4j.processor.s.expr.SExpressionParser;
 import dev.khbd.interp4j.processor.s.expr.SExpressionVisitor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -35,11 +39,40 @@ public class InterpolatedStringLanguageInjector implements MultiHostInjector {
             return;
         }
 
-        if (!Interp4jPsiUtil.insideSMethodCall(literalExpr)) {
+        if (!insideSMethodCall(literalExpr)) {
             return;
         }
 
         injectLanguage(registrar, literalExpr, value);
+    }
+
+    private boolean insideSMethodCall(@NonNull PsiLiteralExpression literalExpression) {
+        PsiElement literalParent = literalExpression.getParent();
+
+        if (literalParent instanceof PsiExpressionList) {
+            return isExpressionListOfSMethodCall((PsiExpressionList) literalParent);
+        } else if (literalParent instanceof PsiPolyadicExpression) {
+            return mayBeSMethodCallWithConcatenatedLiterals((PsiPolyadicExpression) literalParent);
+        }
+
+        return false;
+    }
+
+    private static boolean isExpressionListOfSMethodCall(PsiExpressionList expressionList) {
+        PsiElement mayBeMethodCall = expressionList.getParent();
+        if (!(mayBeMethodCall instanceof PsiMethodCallExpression)) {
+            return false;
+        }
+        PsiMethodCallExpression methodCall = (PsiMethodCallExpression) mayBeMethodCall;
+        return Interp4jPsiUtil.isSMethodCall(methodCall);
+    }
+
+    private static boolean mayBeSMethodCallWithConcatenatedLiterals(PsiPolyadicExpression polyExpression) {
+        PsiElement parent = polyExpression.getParent();
+        if (parent instanceof PsiExpressionList) {
+            return isExpressionListOfSMethodCall((PsiExpressionList) parent);
+        }
+        return false;
     }
 
     private void injectLanguage(MultiHostRegistrar registrar,
