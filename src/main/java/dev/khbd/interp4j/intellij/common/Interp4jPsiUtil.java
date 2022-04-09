@@ -46,13 +46,14 @@ public class Interp4jPsiUtil {
     }
 
     /**
-     * Get string value from psi expression.
+     * Get string text from psi expression.
      *
      * @param expression psi expression
-     * @return string value
+     * @return string text
      */
     @Nullable
-    public static String getStringLiteralValue(@NonNull PsiExpression expression) {
+    public static String getStringLiteralText(@NonNull PsiExpression expression) {
+
         if (!(expression instanceof PsiLiteralExpression)) {
             return null;
         }
@@ -60,6 +61,7 @@ public class Interp4jPsiUtil {
         PsiLiteralExpression literalExpression = (PsiLiteralExpression) expression;
 
         Object value = literalExpression.getValue();
+
         if (Objects.isNull(value)) {
             return null;
         }
@@ -68,7 +70,8 @@ public class Interp4jPsiUtil {
             return null;
         }
 
-        return (String) value;
+        // get text instead of value to get original string with all characters
+        return literalExpression.getText();
     }
 
     /**

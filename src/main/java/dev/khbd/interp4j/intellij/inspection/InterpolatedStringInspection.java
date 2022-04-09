@@ -60,7 +60,7 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
             }
 
             PsiExpression firstExpression = arguments.getExpressions()[0];
-            String value = Interp4jPsiUtil.getStringLiteralValue(firstExpression);
+            String value = Interp4jPsiUtil.getStringLiteralText(firstExpression);
             if (Objects.isNull(value)) {
                 onlyStringLiteralValueIsSupported(firstExpression);
                 return;

@@ -30,7 +30,7 @@ public class InterpolatedStringLanguageInjector implements MultiHostInjector {
     public void getLanguagesToInject(MultiHostRegistrar registrar, PsiElement context) {
         PsiLiteralExpression literalExpr = (PsiLiteralExpression) context;
 
-        String value = Interp4jPsiUtil.getStringLiteralValue(literalExpr);
+        String value = Interp4jPsiUtil.getStringLiteralText(literalExpr);
         if (Objects.isNull(value)) {
             return;
         }
@@ -67,7 +67,7 @@ public class InterpolatedStringLanguageInjector implements MultiHostInjector {
         public void visitExpressionPart(ExpressionPart expressionPart) {
             TextRange range = new TextRange(expressionPart.getStart(), expressionPart.getEnd());
             registrar.startInjecting(JavaLanguage.INSTANCE);
-            registrar.addPlace(PREFIX, SUFFIX, (PsiLanguageInjectionHost) context, range.shiftRight(1));
+            registrar.addPlace(PREFIX, SUFFIX, (PsiLanguageInjectionHost) context, range);
             registrar.doneInjecting();
         }
     }
