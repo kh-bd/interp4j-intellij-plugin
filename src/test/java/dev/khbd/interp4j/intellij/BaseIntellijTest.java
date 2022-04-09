@@ -46,8 +46,8 @@ public abstract class BaseIntellijTest {
         LanguageLevelProjectExtension.getInstance(getProject())
                 .setLanguageLevel(getLanguageLevel());
 
-        LensTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "interp4j-core", "interp4j-core.jar");
-        LensTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "interp4j-processor", "interp4j-processor.jar");
+        Interp4jTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "interp4j-core", "interp4j-core.jar");
+        Interp4jTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "interp4j-processor", "interp4j-processor.jar");
     }
 
     @AfterMethod
@@ -68,7 +68,7 @@ public abstract class BaseIntellijTest {
     }
 
     protected LightProjectDescriptor getProjectDescriptor() {
-        return LensTestUtil.createProjectDescriptor(getLanguageLevel());
+        return Interp4jTestUtil.createProjectDescriptor(getLanguageLevel());
     }
 
     protected Project getProject() {

@@ -21,7 +21,7 @@ import java.io.File;
  * @author Sergei_Khadanovich
  */
 @UtilityClass
-public class LensTestUtil {
+public class Interp4jTestUtil {
 
     private static final String LIB_PATH = "build/lib";
     private static final String JDK_PATH = "JDK/JDK";
