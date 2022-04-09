@@ -9,8 +9,8 @@ public class Main {
     public static void main(String[] args) {
         String name = "Alex";
 
-        System.out.println(s(<error descr="Only string literal value can be used in this place">null</error>));
-        System.out.println(s(<error descr="Only string literal value can be used in this place">TEMPLATE</error>));
-        System.out.println(s(<error descr="Only string literal value can be used in this place">"Hello" + " ${name}"</error>));
+        System.out.println(s(<error descr="Wrong expression type. Only string literal value or concatenation of string literals can be used in this place">null</error>));
+        System.out.println(s(<error descr="Wrong expression type. Only string literal value or concatenation of string literals can be used in this place">TEMPLATE</error>));
+        System.out.println(s(<error descr="Wrong expression type. Only string literal value or concatenation of string literals can be used in this place">"hello" + null</error>));
     }
 }

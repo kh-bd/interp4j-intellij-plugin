@@ -13,8 +13,11 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiPolyadicExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.tree.IElementType;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
 import dev.khbd.interp4j.processor.s.expr.ExpressionPart;
@@ -24,6 +27,7 @@ import dev.khbd.interp4j.processor.s.expr.SExpressionVisitor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -59,15 +63,73 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
                 return;
             }
 
-            PsiExpression firstExpression = arguments.getExpressions()[0];
-            String value = Interp4jPsiUtil.getStringLiteralText(firstExpression);
-            if (Objects.isNull(value)) {
-                onlyStringLiteralValueIsSupported(firstExpression);
+            inspectExpression(methodCall, arguments.getExpressions()[0]);
+        }
+
+        private void inspectExpression(PsiMethodCallExpression methodCall, PsiExpression expression) {
+            if (expression instanceof PsiLiteralExpression) {
+                inspectLiteralExpression(methodCall, (PsiLiteralExpression) expression);
+            } else if (expression instanceof PsiPolyadicExpression) {
+                inspectPolyadicExpression(methodCall, (PsiPolyadicExpression) expression);
+            } else {
+                wrongExpressionType(expression);
+            }
+        }
+
+        private void inspectPolyadicExpression(PsiMethodCallExpression methodCall, PsiPolyadicExpression polyExpr) {
+            if (!isPlusPolyExpression(polyExpr)) {
                 return;
             }
 
+            int needInterpolation = 0;
+            for (PsiExpression operand : polyExpr.getOperands()) {
+                String text = Interp4jPsiUtil.getStringLiteralText(operand);
+
+                // if any part in whole expression is not string literal,
+                // the whole expression is wrong.
+                if (Objects.isNull(text)) {
+                    wrongExpressionType(polyExpr);
+                    return;
+                }
+
+                Optional<SExpression> parseResult = SExpressionParser.getInstance().parse(text);
+
+                if (parseResult.isEmpty()) {
+                    // Expression can not be parsed,
+                    // it means user typed some expression but in wrong format.
+                    // count such expression as interpolatable.
+                    needInterpolation++;
+
+                    unpassableExpression(operand);
+                    continue;
+                }
+
+                SExpression sExpr = parseResult.get();
+                if (existAnyExpressionPart(sExpr)) {
+                    needInterpolation++;
+                }
+            }
+
+            // no one part contains expressions for interpolation
+            if (needInterpolation == 0) {
+                interpolationWithoutExpression(methodCall);
+            }
+        }
+
+        private boolean isPlusPolyExpression(PsiPolyadicExpression polyExpr) {
+            IElementType token = polyExpr.getOperationTokenType();
+            return "PLUS".equals(token.toString());
+        }
+
+        private void inspectLiteralExpression(PsiMethodCallExpression methodCall,
+                                              PsiLiteralExpression literalExpr) {
+            String value = Interp4jPsiUtil.getStringLiteralText(literalExpr);
+            if (Objects.isNull(value)) {
+                wrongExpressionType(literalExpr);
+                return;
+            }
             SExpressionParser.getInstance().parse(value)
-                    .ifPresentOrElse(inspectParsed(methodCall), unpassableExpression());
+                    .ifPresentOrElse(inspectParsed(methodCall), () -> unpassableExpression(literalExpr));
         }
 
         private Consumer<SExpression> inspectParsed(PsiMethodCallExpression methodCall) {
@@ -93,15 +155,19 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
             );
         }
 
-        private Runnable unpassableExpression() {
-            return () -> {
-            };
-        }
-
-        private void onlyStringLiteralValueIsSupported(PsiExpression expression) {
+        private void unpassableExpression(PsiExpression expression) {
             holder.registerProblem(
                     expression,
-                    Interp4jBundle.getMessage("inspection.interpolated.string.is.not.string.literal"),
+                    dev.khbd.interp4j.intellij.Interp4jBundle.getMessage("inspection.interpolated.string.expression.can.not.be.parsed"),
+                    com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR,
+                    new dev.khbd.interp4j.intellij.inspection.InterpolatedStringInspection.RemoteSMethodCallLocalQuickFix()
+            );
+        }
+
+        private void wrongExpressionType(PsiExpression expression) {
+            holder.registerProblem(
+                    expression,
+                    Interp4jBundle.getMessage("inspection.interpolated.string.wrong.expression.type"),
                     ProblemHighlightType.GENERIC_ERROR
             );
         }

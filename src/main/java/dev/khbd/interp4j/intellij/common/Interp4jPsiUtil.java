@@ -53,7 +53,6 @@ public class Interp4jPsiUtil {
      */
     @Nullable
     public static String getStringLiteralText(@NonNull PsiExpression expression) {
-
         if (!(expression instanceof PsiLiteralExpression)) {
             return null;
         }
