@@ -32,6 +32,7 @@
                 implementationClass="dev.khbd.interp4j.intellij.inspection.InterpolateMethodInvocationInspection"/>
 
         <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.InterpolatedStringLanguageInjector"/>
+        <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.LocalVariableInStringLiteralsImplicitUsageProvider"/>
     </extensions>
 
 </idea-plugin>
