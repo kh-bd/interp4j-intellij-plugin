@@ -6,10 +6,10 @@ name: Java CI with Gradle
 on:
   push:
     branches:
-      - main
+      - backport_2021_3
   pull_request:
     branches:
-      - main
+      - backport_2021_3
 
 jobs:
   test:
