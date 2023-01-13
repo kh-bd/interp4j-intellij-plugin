@@ -1,0 +1,30 @@
+<html>
+<body>
+<p>
+    This inspection reports when the <code>String#format</code> is used in places
+    where string interpolation can be used.
+</p>
+<p>
+<pre><code>
+    // incorrect
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var greet = String.format("Hello, %s", name);
+        }
+    }
+</code></pre>
+</p>
+<p>
+<pre><code>
+    // correct
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var result = s("hello, $name");
+        }
+    }
+</code></pre>
+</p>
+</body>
+</html>
