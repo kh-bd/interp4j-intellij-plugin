@@ -35,4 +35,17 @@ public class FormatExpression {
         parts.add(part);
         return this;
     }
+
+    /**
+     * Traverse self with specified visitor.
+     *
+     * @param visitor visitor
+     */
+    public void visit(FormatExpressionVisitor visitor) {
+        visitor.start();
+        for (FormatExpressionPart part : parts) {
+            visitor.visitPart(part);
+        }
+        visitor.finish();
+    }
 }
