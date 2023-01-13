@@ -10,14 +10,14 @@ import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiMethodCallExpression;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
-import dev.khbd.interp4j.intellij.common.grammar.format.Conversion;
 import dev.khbd.interp4j.intellij.common.grammar.format.FormatExpression;
 import dev.khbd.interp4j.intellij.common.grammar.format.FormatExpressionParser;
 import dev.khbd.interp4j.intellij.common.grammar.format.FormatExpressionVisitor;
-import dev.khbd.interp4j.intellij.common.grammar.format.Index;
+import dev.khbd.interp4j.intellij.common.grammar.format.FormatSpecifier;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -85,40 +85,19 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
         private static final class ExpressionSimplicityChecker implements FormatExpressionVisitor {
 
+            private static final List<String> ALLOWED_CONVERSIONS = List.of(
+                    "s", "S", "d"
+            );
+
             private boolean simple = true;
 
             @Override
-            public void visitIndex(Index index) {
-                if (Objects.nonNull(index)) {
-                    simple = false;
-                }
-            }
-
-            @Override
-            public void visitFlags(String flag) {
-                if (Objects.nonNull(flag)) {
-                    simple = false;
-                }
-            }
-
-            @Override
-            public void visitWidth(Integer width) {
-                if (Objects.nonNull(width)) {
-                    simple = false;
-                }
-            }
-
-            @Override
-            public void visitPrecision(Integer precision) {
-                if (Objects.nonNull(precision)) {
-                    simple = false;
-                }
-            }
-
-            @Override
-            public void visitConversion(Conversion conversion) {
-                String symbols = conversion.symbols();
-                if (!symbols.equals("s") && !symbols.equals("S")) {
+            public void visitSpecifier(FormatSpecifier specifier) {
+                if (specifier.index() != null
+                        || specifier.flags() != null
+                        || specifier.width() != null
+                        || specifier.precision() != null
+                        || !ALLOWED_CONVERSIONS.contains(specifier.conversion().symbols())) {
                     simple = false;
                 }
             }
