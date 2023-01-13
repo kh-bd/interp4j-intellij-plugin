@@ -150,9 +150,9 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
         private void unpassableExpression(PsiExpression expression) {
             holder.registerProblem(
                     expression,
-                    dev.khbd.interp4j.intellij.Interp4jBundle.getMessage("inspection.interpolated.string.expression.can.not.be.parsed"),
-                    com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR,
-                    new dev.khbd.interp4j.intellij.inspection.InterpolatedStringInspection.RemoteSMethodCallLocalQuickFix()
+                    Interp4jBundle.getMessage("inspection.interpolated.string.expression.can.not.be.parsed"),
+                    ProblemHighlightType.GENERIC_ERROR,
+                    new RemoteSMethodCallLocalQuickFix()
             );
         }
 

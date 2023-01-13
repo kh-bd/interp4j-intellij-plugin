@@ -30,6 +30,17 @@
                 key="inspection.interpolate.method.invocation"
                 shortName="InterpolateMethodInvocationInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.InterpolateMethodInvocationInspection"/>
+        <localInspection
+                language="JAVA"
+                enabledByDefault="true"
+                level="WARNING"
+                groupBundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                groupKey="inspections"
+                groupPath="Java"
+                bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                key="inspection.string.format.usage"
+                shortName="StringFormatMightBeReplacedInspection"
+                implementationClass="dev.khbd.interp4j.intellij.inspection.StringFormatMightBeReplacedInspection"/>
 
         <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.InterpolatedStringLanguageInjector"/>
         <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.LocalVariableInStringLiteralsImplicitUsageProvider"/>

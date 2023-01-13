@@ -6,6 +6,8 @@ import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiParameterList;
 import dev.khbd.interp4j.core.Interpolations;
 import dev.khbd.interp4j.core.internal.s.SInterpolator;
 import lombok.NonNull;
@@ -29,7 +31,7 @@ public class Interp4jPsiUtil {
     public static boolean isSMethodCall(@NonNull PsiMethodCallExpression methodCall) {
         PsiMethod originalMethod = methodCall.resolveMethod();
         return Objects.nonNull(originalMethod)
-                && isMethodFromClassWithName(originalMethod, "s", Interpolations.class);
+                && isMethodFromClassWithName(originalMethod, "s", Interpolations.class, true);
     }
 
     /**
@@ -41,11 +43,37 @@ public class Interp4jPsiUtil {
     public static boolean isInterpolateMethodCall(@NonNull PsiMethodCallExpression methodCall) {
         PsiMethod originalMethod = methodCall.resolveMethod();
         return Objects.nonNull(originalMethod)
-                && isMethodFromClassWithName(originalMethod, "interpolate", SInterpolator.class);
+                && isMethodFromClassWithName(originalMethod, "interpolate", SInterpolator.class, false);
     }
 
-    private boolean isMethodFromClassWithName(PsiMethod method, String name, Class<?> clazz) {
+    /**
+     * Check whether method call is {@link String#format(String, Object...)} call.
+     *
+     * @param methodCall method call
+     */
+    public static boolean isStringFormatCall(@NonNull PsiMethodCallExpression methodCall) {
+        PsiMethod originalMethod = methodCall.resolveMethod();
+        if (Objects.isNull(originalMethod)) {
+            return false;
+        }
+
+        if (!isMethodFromClassWithName(originalMethod, "format", String.class, true)) {
+            return false;
+        }
+
+        PsiParameterList arguments = originalMethod.getParameterList();
+
+        // String.format(template, args)
+        // need to check arguments because String class has additional format method with
+        // locale argument at first position
+        return arguments.getParametersCount() == 2;
+    }
+
+    private boolean isMethodFromClassWithName(PsiMethod method, String name, Class<?> clazz, boolean isStatic) {
         if (!method.getName().equals(name)) {
+            return false;
+        }
+        if (isStatic && !method.getModifierList().hasExplicitModifier(PsiModifier.STATIC)) {
             return false;
         }
         PsiElement parent = method.getParent();
