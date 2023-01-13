@@ -13,4 +13,8 @@ public record FormatSpecifier(Index index, String flags, Integer width, Integer 
     FormatSpecifier(Conversion conversion) {
         this(null, null, null, null, conversion);
     }
+
+    FormatSpecifier(Index index, Conversion conversion) {
+        this(index, null, null, null, conversion);
+    }
 }

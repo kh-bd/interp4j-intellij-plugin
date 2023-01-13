@@ -60,4 +60,45 @@ public class FormatGrammarDefinitionTest {
                         .addPart(new FormatSpecifier(null, "(,", null, 2, new Conversion("f")))
         );
     }
+
+    @Test
+    public void parse_withTimeConversion_parse() {
+        Optional<FormatExpression> result = parser.parse("Local time: %tT");
+
+        assertThat(result).hasValue(
+                new FormatExpression()
+                        .addPart(new FormatText("Local time: "))
+                        .addPart(new FormatSpecifier(new Conversion("tT")))
+        );
+    }
+
+    @Test
+    public void parse_withTimeAndDate_parse() {
+        Optional<FormatExpression> result = parser.parse("Duke's Birthday: %1$tm %1$te,%1$tY");
+
+        assertThat(result).hasValue(
+                new FormatExpression()
+                        .addPart(new FormatText("Duke's Birthday: "))
+                        .addPart(new FormatSpecifier(new NumericIndex(1), new Conversion("tm")))
+                        .addPart(new FormatText(" "))
+                        .addPart(new FormatSpecifier(new NumericIndex(1), new Conversion("te")))
+                        .addPart(new FormatText(","))
+                        .addPart(new FormatSpecifier(new NumericIndex(1), new Conversion("tY")))
+        );
+    }
+
+    @Test
+    public void parse_withTimeAndDateAndImplicitIndex_parse() {
+        Optional<FormatExpression> result = parser.parse("Duke's Birthday: %1$tm %<te,%<tY");
+
+        assertThat(result).hasValue(
+                new FormatExpression()
+                        .addPart(new FormatText("Duke's Birthday: "))
+                        .addPart(new FormatSpecifier(new NumericIndex(1), new Conversion("tm")))
+                        .addPart(new FormatText(" "))
+                        .addPart(new FormatSpecifier(new ImplicitIndex(), new Conversion("te")))
+                        .addPart(new FormatText(","))
+                        .addPart(new FormatSpecifier(new ImplicitIndex(), new Conversion("tY")))
+        );
+    }
 }
