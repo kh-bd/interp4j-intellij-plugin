@@ -26,13 +26,13 @@ class FormatGrammarDefinition extends GrammarDefinition {
         );
         action("start", (List<Object> args) -> {
             FormatExpression expression = new FormatExpression();
-            FormatText text = (FormatText) args.get(0);
+            FormatText text = getTyped(args, 0);
             if (!text.isEmpty()) {
                 expression.addPart(text);
             }
 
             if (args.size() > 1) {
-                List<SpecifierAndText> other = (List<SpecifierAndText>) args.get(1);
+                List<SpecifierAndText> other = getTyped(args, 1);
                 for (SpecifierAndText specifierAndText : other) {
                     expression.addPart(specifierAndText.specifier);
                     if (!specifierAndText.text.isEmpty()) {
@@ -46,18 +46,11 @@ class FormatGrammarDefinition extends GrammarDefinition {
 
         // text and specifier
         def("specifierAndText", ref("specifier").seq(ref("text")));
-        action("specifierAndText", (List<Object> args) ->
-                new SpecifierAndText((FormatSpecifier) args.get(0), (FormatText) args.get(1)));
+        action("specifierAndText", (List<Object> args) -> new SpecifierAndText(getTyped(args, 0), getTyped(args, 1)));
 
         // text
         def("text", noneOf("%").star());
-        action("text", (List<Object> args) -> {
-            String text = args.stream()
-                    .map(Objects::toString)
-                    .collect(Collectors.joining(""));
-            return new FormatText(text);
-        });
-
+        action("text", listAsString().andThen(FormatText::new));
 
         // specifier
         def("specifier",
@@ -69,10 +62,9 @@ class FormatGrammarDefinition extends GrammarDefinition {
                         .seq(ref("conversion"))
         );
         action("specifier", (List<Object> args) ->
-                new FormatSpecifier((Index) args.get(1),
-                        (String) args.get(2),
-                        (Integer) args.get(3), (Integer) args.get(4),
-                        (Conversion) args.get(5)
+                new FormatSpecifier(getTyped(args, 1), getTyped(args, 2),
+                        getTyped(args, 3), getTyped(args, 4),
+                        getTyped(args, 5)
                 ));
 
         // index
@@ -97,9 +89,9 @@ class FormatGrammarDefinition extends GrammarDefinition {
         return digit().map(asString())
                 .seq(digit().star().flatten())
                 .seq(character('$'))
-                .map(it -> {
-                    List<Object> args = (List<Object>) it;
-                    int position = Integer.parseInt((String) args.get(0) + (String) args.get(1));
+                .map((List<Object> args) -> {
+                    String firstDigit = getTyped(args, 0);
+                    int position = Integer.parseInt(firstDigit + getTyped(args, 1));
                     return new NumericIndex(position);
                 });
     }
@@ -107,9 +99,9 @@ class FormatGrammarDefinition extends GrammarDefinition {
     private static Parser number() {
         return digit().map(asString())
                 .seq(digit().star().flatten())
-                .map(it -> {
-                    List<Object> args = (List<Object>) it;
-                    return Integer.parseInt((String) args.get(0) + (String) args.get(1));
+                .map((List<Object> args) -> {
+                    String firstDigit = getTyped(args, 0);
+                    return Integer.parseInt(firstDigit + getTyped(args, 1));
                 });
     }
 
@@ -130,10 +122,8 @@ class FormatGrammarDefinition extends GrammarDefinition {
                 .or(character('f'))
                 .or(anyOf("gG"))
                 .or(anyOf("aA"))
-                .or(character('t').seq(dateTimeConversionSuffix)
-                        .map((List<Object> args) -> Character.toString((Character) args.get(0)) + args.get(1)))
-                .or(character('T').seq(dateTimeConversionSuffix)
-                        .map((List<Object> args) -> Character.toString((Character) args.get(0)) + args.get(1)))
+                .or(character('t').seq(dateTimeConversionSuffix).map(listAsString()))
+                .or(character('T').seq(dateTimeConversionSuffix).map(listAsString()))
                 .or(character('%'))
                 .or(character('n'))
                 .map(asString()).map(conv -> new Conversion((String) conv));
@@ -144,10 +134,7 @@ class FormatGrammarDefinition extends GrammarDefinition {
     }
 
     private static Parser flags() {
-        return anyOf("-#+ 0,(").plus()
-                .map((List<Object> args) -> args.stream()
-                        .map(Objects::toString)
-                        .collect(Collectors.joining("")));
+        return anyOf("-#+ 0,(").plus().map(listAsString());
     }
 
     private static Parser character(char c) {
@@ -158,6 +145,19 @@ class FormatGrammarDefinition extends GrammarDefinition {
         return Objects::toString;
     }
 
+    private static Function<List<Object>, String> listAsString() {
+        return args -> args.stream()
+                .map(Objects::toString)
+                .collect(Collectors.joining(""));
+
+    }
+
     private record SpecifierAndText(FormatSpecifier specifier, FormatText text) {
     }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T getTyped(List<Object> values, int index) {
+        return (T) values.get(index);
+    }
+
 }
