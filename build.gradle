@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     implementation group: 'dev.khbd.interp4j', name: 'interp4j-core', version: interp4j_version
-    implementation group: 'dev.khbd.interp4j', name: 'interp4j-processor', version: interp4j_version
+    implementation group: 'com.github.petitparser', name: 'petitparser-core', version: petit_parser_version
 
     testImplementation group: 'org.testng', name: 'testng', version: '6.13.1'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.9.0'

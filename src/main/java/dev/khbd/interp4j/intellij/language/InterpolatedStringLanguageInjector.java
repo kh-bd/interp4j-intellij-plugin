@@ -11,10 +11,10 @@ import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiPolyadicExpression;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
-import dev.khbd.interp4j.processor.s.expr.ExpressionPart;
-import dev.khbd.interp4j.processor.s.expr.SExpression;
-import dev.khbd.interp4j.processor.s.expr.SExpressionParser;
-import dev.khbd.interp4j.processor.s.expr.SExpressionVisitor;
+import dev.khbd.interp4j.intellij.common.grammar.s.SCode;
+import dev.khbd.interp4j.intellij.common.grammar.s.SExpression;
+import dev.khbd.interp4j.intellij.common.grammar.s.SExpressionParser;
+import dev.khbd.interp4j.intellij.common.grammar.s.SExpressionVisitor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -97,8 +97,8 @@ public class InterpolatedStringLanguageInjector implements MultiHostInjector {
         final PsiLiteralExpression context;
 
         @Override
-        public void visitExpressionPart(ExpressionPart expressionPart) {
-            TextRange range = new TextRange(expressionPart.getStart(), expressionPart.getEnd());
+        public void visitCode(SCode code) {
+            TextRange range = new TextRange(code.start(), code.end());
             registrar.startInjecting(JavaLanguage.INSTANCE);
             registrar.addPlace(PREFIX, SUFFIX, (PsiLanguageInjectionHost) context, range);
             registrar.doneInjecting();

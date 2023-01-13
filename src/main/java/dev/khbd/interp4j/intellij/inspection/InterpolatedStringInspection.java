@@ -20,10 +20,8 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.tree.IElementType;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
-import dev.khbd.interp4j.processor.s.expr.ExpressionPart;
-import dev.khbd.interp4j.processor.s.expr.SExpression;
-import dev.khbd.interp4j.processor.s.expr.SExpressionParser;
-import dev.khbd.interp4j.processor.s.expr.SExpressionVisitor;
+import dev.khbd.interp4j.intellij.common.grammar.s.SExpression;
+import dev.khbd.interp4j.intellij.common.grammar.s.SExpressionParser;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
@@ -105,14 +103,14 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
                 }
 
                 SExpression sExpr = parseResult.get();
-                if (existAnyExpressionPart(sExpr)) {
+                if (sExpr.hasAnyCode()) {
                     needInterpolation++;
                 }
             }
 
             // no one part contains expressions for interpolation
             if (needInterpolation == 0) {
-                interpolationWithoutExpression(methodCall);
+                interpolationWithoutCodeBlocks(methodCall);
             }
         }
 
@@ -134,19 +132,13 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
 
         private Consumer<SExpression> inspectParsed(PsiMethodCallExpression methodCall) {
             return sExpr -> {
-                if (!existAnyExpressionPart(sExpr)) {
-                    interpolationWithoutExpression(methodCall);
+                if (!sExpr.hasAnyCode()) {
+                    interpolationWithoutCodeBlocks(methodCall);
                 }
             };
         }
 
-        private boolean existAnyExpressionPart(SExpression sExpr) {
-            ExpressionsCounter counter = new ExpressionsCounter();
-            sExpr.visit(counter);
-            return counter.count > 0;
-        }
-
-        private void interpolationWithoutExpression(PsiMethodCallExpression methodCall) {
+        private void interpolationWithoutCodeBlocks(PsiMethodCallExpression methodCall) {
             holder.registerProblem(
                     methodCall,
                     Interp4jBundle.getMessage("inspection.interpolated.string.no.one.expression.found"),
@@ -196,13 +188,4 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
         }
     }
 
-    private static class ExpressionsCounter implements SExpressionVisitor {
-
-        private int count = 0;
-
-        @Override
-        public void visitExpressionPart(ExpressionPart expressionPart) {
-            count++;
-        }
-    }
 }
