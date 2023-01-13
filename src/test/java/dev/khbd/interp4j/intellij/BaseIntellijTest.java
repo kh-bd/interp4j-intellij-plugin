@@ -47,7 +47,7 @@ public abstract class BaseIntellijTest {
                 .setLanguageLevel(getLanguageLevel());
 
         Interp4jTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "interp4j-core", "interp4j-core.jar");
-        Interp4jTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "interp4j-processor", "interp4j-processor.jar");
+        Interp4jTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "petitparser-core", "petitparser-core.jar");
     }
 
     @AfterMethod

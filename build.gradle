@@ -52,9 +52,9 @@ task libs(type: Sync) {
     from configurations.compileClasspath
     into "$buildDir/lib"
     include 'interp4j-core-' + interp4j_version + '.jar'
-    include 'interp4j-processor-' + interp4j_version + '.jar'
+    include 'petitparser-core-' + petit_parser_version + '.jar'
     rename 'interp4j-core-' + interp4j_version, 'interp4j-core'
-    rename 'interp4j-processor-' + interp4j_version, 'interp4j-processor'
+    rename 'petitparser-core-' + petit_parser_version, 'petitparser-core'
 }
 
 test.dependsOn(libs)
