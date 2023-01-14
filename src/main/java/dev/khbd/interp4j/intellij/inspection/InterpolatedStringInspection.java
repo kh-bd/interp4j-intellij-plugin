@@ -165,7 +165,6 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
         }
     }
 
-    @RequiredArgsConstructor
     private static class RemoteSMethodCallLocalQuickFix implements LocalQuickFix {
 
         @Override
