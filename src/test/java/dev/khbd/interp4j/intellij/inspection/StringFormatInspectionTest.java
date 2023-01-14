@@ -1,8 +1,13 @@
 package dev.khbd.interp4j.intellij.inspection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.intellij.codeInsight.intention.IntentionAction;
 import dev.khbd.interp4j.intellij.BaseIntellijTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * @author Sergei_Khadanovich
@@ -19,6 +24,10 @@ public class StringFormatInspectionTest extends BaseIntellijTest {
         fixture.configureByFiles("inspection/format/only_string_conversions/Main.java");
 
         fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(1);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/format/only_string_conversions/Main_after.java");
     }
 
     @Test
@@ -40,6 +49,10 @@ public class StringFormatInspectionTest extends BaseIntellijTest {
         fixture.configureByFiles("inspection/format/with_integer_conversion/Main.java");
 
         fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(1);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/format/with_integer_conversion/Main_after.java");
     }
 
     @Test
