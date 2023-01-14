@@ -48,4 +48,13 @@ public class FormatExpression {
         }
         visitor.finish();
     }
+
+    /**
+     * Calculate specifiers count.
+     */
+    public long specifiersCount() {
+        return parts.stream()
+                .filter(part -> part instanceof FormatSpecifier)
+                .count();
+    }
 }

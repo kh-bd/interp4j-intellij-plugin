@@ -41,4 +41,12 @@ public class StringFormatInspectionTest extends BaseIntellijTest {
 
         fixture.testHighlighting(true, false, true);
     }
+
+    @Test
+    public void inspect_wrongArgumentCount_notHighlight() {
+        fixture.configureByFiles("inspection/format/wrong_argument_count/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
 }
