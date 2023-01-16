@@ -39,3 +39,13 @@ Type in `interp4j`. It should be there.
 
 If you cannot find plugin in marketplace, it can mean your IntelliJ version is not supported.
 Try to update to the latest IntelliJ version.
+
+## Main features
+
+- Syntax highlighting. Expressions inside `s()` are highlighted as java code
+- Code completions in `s()` call works as well
+- Errors and Quick fixes:
+  - `s()` call without expressions is redundant
+  - `String.format()` usage can be rewritten with `s()` method call
+- Go To Declaration and Find usages features are supported for expressions inside `s()` call
+
