@@ -7,7 +7,7 @@ public class Main {
     public static void main(String... args) {
         String yourName = "Alex";
         String myName = "Sergei";
-        s("hello $yourName, Who are you? I am $myName");
+        s("hello ${yourName}, Who are you? I am ${myName}");
     }
 
 }

@@ -20,7 +20,6 @@ import com.intellij.psi.PsiImportList;
 import com.intellij.psi.PsiImportStaticStatement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import dev.khbd.interp4j.core.Interpolations;
@@ -206,14 +205,9 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
                 PsiExpression expression = arguments.getExpressions()[index];
 
-                if (expression instanceof PsiReferenceExpression) {
-                    builder.append("$");
-                    builder.append(expression.getText());
-                } else {
-                    builder.append("${");
-                    builder.append(expression.getText());
-                    builder.append("}");
-                }
+                builder.append("${");
+                builder.append(expression.getText());
+                builder.append("}");
 
                 seenSpecifiersCount += 1;
             }
