@@ -1,0 +1,30 @@
+<html>
+<body>
+<p>
+    This inspection reports when the string concatenation is used in places
+    where string interpolation can be used.
+</p>
+<p>
+<pre><code>
+    // incorrect
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var greet = "Hello, " + name;
+        }
+    }
+</code></pre>
+</p>
+<p>
+<pre><code>
+    // correct
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var result = s("hello, $name");
+        }
+    }
+</code></pre>
+</p>
+</body>
+</html>
