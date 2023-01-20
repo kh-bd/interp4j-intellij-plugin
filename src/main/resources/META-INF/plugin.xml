@@ -41,6 +41,17 @@
                 key="inspection.string.format.usage"
                 shortName="StringFormatMightBeReplacedInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.StringFormatMightBeReplacedInspection"/>
+        <localInspection
+                language="JAVA"
+                enabledByDefault="true"
+                level="WARNING"
+                groupBundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                groupKey="inspections"
+                groupPath="Java"
+                bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                key="inspection.string.concat.usage"
+                shortName="StringConcatMightBeReplacedInspection"
+                implementationClass="dev.khbd.interp4j.intellij.inspection.StringConcatMightBeReplacedInspection"/>
 
         <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.InterpolatedStringLanguageInjector"/>
         <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.LocalVariableInStringLiteralsImplicitUsageProvider"/>
