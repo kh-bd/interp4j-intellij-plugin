@@ -34,4 +34,11 @@ public class StringConcatMightBeReplacedInspectionTest extends BaseIntellijTest 
 
         fixture.testHighlighting(true, false, true);
     }
+
+    @Test
+    public void inspect_moreThanTwoPartsInExpression_warnExpression() {
+        fixture.configureByFiles("inspection/concat/more_than_two_parts/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
 }
