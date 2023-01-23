@@ -10,19 +10,14 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.command.undo.UndoUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiExpressionList;
-import com.intellij.psi.PsiImportList;
-import com.intellij.psi.PsiImportStaticStatement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import dev.khbd.interp4j.core.Interpolations;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
 import dev.khbd.interp4j.intellij.common.grammar.format.FormatExpression;
@@ -156,26 +151,11 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
                 WriteCommandAction.runWriteCommandAction(project, null, null, () -> {
                     methodCall.replace(sMethodCall);
 
-                    addSImport(project, file, factory);
+                    Interp4jPsiUtil.addSImport(project, file);
                     JavaCodeStyleManager.getInstance(project).optimizeImports(file);
 
                     UndoUtil.markPsiFileForUndo(file);
                 }, file);
-            }
-
-            private void addSImport(Project project, PsiJavaFile file, PsiElementFactory factory) {
-                PsiClass interpolationsClass = JavaPsiFacade.getInstance(project)
-                        .findClass(Interpolations.class.getCanonicalName(), GlobalSearchScope.allScope(project));
-
-                if (Objects.isNull(interpolationsClass)) {
-                    return;
-                }
-
-                PsiImportStaticStatement sImport = factory.createImportStaticStatement(interpolationsClass, "s");
-
-                PsiImportList imports = file.getImportList();
-                // imports can not be null, because user is modifying source file, not compiled file
-                imports.add(sImport);
             }
         }
 

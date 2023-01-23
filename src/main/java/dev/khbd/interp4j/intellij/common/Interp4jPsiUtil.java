@@ -1,13 +1,20 @@
 package dev.khbd.interp4j.intellij.common;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiImportList;
+import com.intellij.psi.PsiImportStaticStatement;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameterList;
+import com.intellij.psi.search.GlobalSearchScope;
 import dev.khbd.interp4j.core.Interpolations;
 import dev.khbd.interp4j.core.internal.s.SInterpolator;
 import lombok.NonNull;
@@ -122,5 +129,27 @@ public class Interp4jPsiUtil {
         }
         // value can be null, but it's correct because null instanceof String is false
         return literalExpr.getValue() instanceof String;
+    }
+
+    /**
+     * Add static import for {@link Interpolations#s} function.
+     *
+     * @param project project
+     * @param file    java file
+     */
+    public static void addSImport(@NonNull Project project, @NonNull PsiJavaFile file) {
+        PsiClass interpolationsClass = JavaPsiFacade.getInstance(project)
+                .findClass(Interpolations.class.getCanonicalName(), GlobalSearchScope.allScope(project));
+
+        if (Objects.isNull(interpolationsClass)) {
+            return;
+        }
+
+        PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
+        PsiImportStaticStatement sImport = factory.createImportStaticStatement(interpolationsClass, "s");
+
+        PsiImportList imports = file.getImportList();
+        // imports can not be null, because user is modifying source file, not compiled file
+        imports.add(sImport);
     }
 }

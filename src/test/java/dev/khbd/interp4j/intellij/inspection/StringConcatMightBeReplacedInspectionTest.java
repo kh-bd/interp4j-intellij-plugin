@@ -1,8 +1,13 @@
 package dev.khbd.interp4j.intellij.inspection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.intellij.codeInsight.intention.IntentionAction;
 import dev.khbd.interp4j.intellij.BaseIntellijTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * @author Sergei_Khadanovich
@@ -19,6 +24,10 @@ public class StringConcatMightBeReplacedInspectionTest extends BaseIntellijTest 
         fixture.configureByFiles("inspection/concat/literal_and_expression/Main.java");
 
         fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(2);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/concat/literal_and_expression/Main_after.java");
     }
 
     @Test
@@ -40,5 +49,9 @@ public class StringConcatMightBeReplacedInspectionTest extends BaseIntellijTest 
         fixture.configureByFiles("inspection/concat/more_than_two_parts/Main.java");
 
         fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(1);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/concat/more_than_two_parts/Main_after.java");
     }
 }
