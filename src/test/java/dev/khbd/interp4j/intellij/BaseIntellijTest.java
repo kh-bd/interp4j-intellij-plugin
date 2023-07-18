@@ -33,7 +33,7 @@ public abstract class BaseIntellijTest {
     public void beforeMethod() throws Exception {
         IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
         TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-                factory.createLightFixtureBuilder(getProjectDescriptor());
+                factory.createLightFixtureBuilder(getProjectDescriptor(), "interp4j");
 
         IdeaProjectTestFixture projectFixture = fixtureBuilder.getFixture();
 
