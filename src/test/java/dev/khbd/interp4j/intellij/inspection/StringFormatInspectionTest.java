@@ -62,4 +62,47 @@ public class StringFormatInspectionTest extends BaseIntellijTest {
         fixture.testHighlighting(true, false, true);
     }
 
+    @Test
+    public void inspect_withSimpleConcatenation_warnUsage() {
+        fixture.configureByFiles("inspection/format/with_concatenation/simple_concat/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(1);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/format/with_concatenation/simple_concat/Main_after.java");
+    }
+
+    @Test
+    public void inspect_withConcatenationWhereMoreThanTwoParts_warnUsage() {
+        fixture.configureByFiles("inspection/format/with_concatenation/more_than_two_parts/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(1);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/format/with_concatenation/more_than_two_parts/Main_after.java");
+    }
+
+    @Test
+    public void inspect_withConcatenationWithNull_notHighlight() {
+        fixture.configureByFiles("inspection/format/with_concatenation/with_null/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
+    @Test
+    public void inspect_withConcatenationWhereOnlyLiterals_notHighlight() {
+        fixture.configureByFiles("inspection/format/with_concatenation/only_literals/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
+    @Test
+    public void inspect_withConcatenationWhereWrongArgumentCount_notHighlight() {
+        fixture.configureByFiles("inspection/format/with_concatenation/wrong_argument_count/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
 }
