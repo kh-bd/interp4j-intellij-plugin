@@ -17,6 +17,7 @@ import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiPolyadicExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
@@ -58,12 +59,12 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
             }
 
             PsiExpressionList arguments = methodCall.getArgumentList();
-            if (arguments.isEmpty()) {
+            if (arguments.getExpressionCount() < 2) {
                 // there should be at least two arguments, but user might not complete typing yet
                 return;
             }
 
-            String formatStr = Interp4jPsiUtil.getStringLiteralText(arguments.getExpressions()[0]);
+            String formatStr = getStringLiteralText(arguments.getExpressions()[0]);
 
             // user can use static field to defined template
             // such cases are not detected yet, but it can be implemented later
@@ -90,6 +91,27 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
                     ProblemHighlightType.WEAK_WARNING,
                     new ReplaceOnStringInterpolationLocalQuickFix(parsedExpression)
             );
+        }
+
+        private String getStringLiteralText(PsiExpression expression) {
+            if (expression instanceof PsiPolyadicExpression polyExpr) {
+                return isCorrectExpressionType(polyExpr) ? expression.getText() : null;
+            }
+
+            return Interp4jPsiUtil.getStringLiteralText(expression);
+        }
+
+        private boolean isCorrectExpressionType(PsiPolyadicExpression polyExpr) {
+            for (PsiExpression operand : polyExpr.getOperands()) {
+                String text = Interp4jPsiUtil.getStringLiteralText(operand);
+
+                // if any part in whole expression is not string literal, the whole expression is wrong.
+                if (Objects.isNull(text)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private boolean isSimpleEnough(FormatExpression expression) {
