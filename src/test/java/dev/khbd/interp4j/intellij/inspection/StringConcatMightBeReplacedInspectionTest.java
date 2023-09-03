@@ -20,6 +20,13 @@ public class StringConcatMightBeReplacedInspectionTest extends BaseIntellijTest 
     }
 
     @Test
+    public void inspect_concatenationInAnnotation_doNothing() {
+        fixture.configureByFiles("inspection/concat/in_annotation/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
+    @Test
     public void inspect_simpleStringConcatenation_warnExpression() {
         fixture.configureByFiles("inspection/concat/literal_and_expression/Main.java");
 

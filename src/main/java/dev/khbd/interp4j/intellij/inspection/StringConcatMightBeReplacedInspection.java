@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiNameValuePair;
 import com.intellij.psi.PsiPolyadicExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
@@ -41,7 +42,9 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
 
         @Override
         public void visitElement(PsiElement element) {
-            if (!(element instanceof PsiPolyadicExpression poly) || !isPlusExpression(poly)) {
+            if (!(element instanceof PsiPolyadicExpression poly)
+                    || !isPlusExpression(poly)
+                    || element.getParent() instanceof PsiNameValuePair) {
                 return;
             }
 
