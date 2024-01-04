@@ -54,7 +54,7 @@
                 implementationClass="dev.khbd.interp4j.intellij.inspection.StringConcatMightBeReplacedInspection"/>
 
         <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.InterpolatedStringLanguageInjector"/>
-        <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.LocalVariableInStringLiteralsImplicitUsageProvider"/>
+        <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.InStringLiteralsImplicitUsageProvider"/>
     </extensions>
 
 </idea-plugin>
