@@ -30,6 +30,21 @@ import java.util.Objects;
 public class Interp4jPsiUtil {
 
     /**
+     * Check if {@link Interpolations#s} function is in scope.
+     *
+     * @param element psi element
+     * @return {@literal true} if function is in scope and {@literal false} otherwise
+     */
+    public static boolean isInterpolationEnabled(PsiElement element) {
+        GlobalSearchScope scope = GlobalSearchScope.allScope(element.getProject());
+
+        PsiClass psiClass = JavaPsiFacade.getInstance(element.getProject())
+                        .findClass(Interpolations.class.getCanonicalName(), scope);
+
+        return Objects.nonNull(psiClass);
+    }
+
+    /**
      * Check is supplied method call a 's' method call.
      *
      * @param methodCall method call

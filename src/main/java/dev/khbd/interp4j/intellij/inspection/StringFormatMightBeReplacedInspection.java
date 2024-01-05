@@ -49,12 +49,9 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
         @Override
         public void visitElement(@NotNull PsiElement element) {
-            if (!(element instanceof PsiMethodCallExpression)) {
-                return;
-            }
-
-            PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
-            if (!Interp4jPsiUtil.isStringFormatCall(methodCall)) {
+            if (!Interp4jPsiUtil.isInterpolationEnabled(element)
+                    || !(element instanceof PsiMethodCallExpression methodCall)
+                    || !Interp4jPsiUtil.isStringFormatCall(methodCall)) {
                 return;
             }
 
