@@ -1,6 +1,5 @@
 package dev.khbd.interp4j.intellij.inspection;
 
-import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -120,12 +119,6 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
                 }
                 builder.append("\")");
                 return builder.toString();
-            }
-
-            @Override
-            @NotNull
-            public IntentionPreviewInfo generatePreview(Project project, ProblemDescriptor problem) {
-                return IntentionPreviewInfo.EMPTY;
             }
         }
 

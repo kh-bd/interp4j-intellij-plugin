@@ -5,11 +5,11 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [main]
+    branches: [backport-2021]
     paths-ignore:
       - 'change-notes.html'
   pull_request:
-    branches: [main]
+    branches: [backport-2021]
     paths-ignore:
       - 'change-notes.html'
 
@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        intellijVersion: [ 2023.2, 2023.3 ]
+        intellijVersion: [ 2021.1, 2021.2, 2021.3 ]
     runs-on: ubuntu-latest
     name: 'Testing with INTELLIJ ${{ matrix.intellijVersion }}'
     env:
