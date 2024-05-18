@@ -20,6 +20,7 @@ import com.intellij.psi.PsiPolyadicExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
+import dev.khbd.interp4j.intellij.common.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,7 +112,7 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
                 for (PsiExpression operand : poly.getOperands()) {
                     if (Interp4jPsiUtil.isStringLiteral(operand)) {
                         PsiLiteralExpression literal = (PsiLiteralExpression) operand;
-                        builder.append((String) literal.getValue());
+                        builder.append(StringUtils.escapeDoubleQuotes((String) literal.getValue()));
                     } else {
                         builder.append("${");
                         builder.append(operand.getText());
