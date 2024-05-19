@@ -72,4 +72,15 @@ public class StringConcatMightBeReplacedInspectionTest extends BaseIntellijTest 
         launchActions(intentions);
         fixture.checkResultByFile("inspection/concat/literal_with_double_quotes/Main_after.java");
     }
+
+    @Test
+    public void inspect_expressionWithDoubleQuotes_warnExpression() {
+        fixture.configureByFiles("inspection/concat/expression_with_double_quotes/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(1);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/concat/expression_with_double_quotes/Main_after.java");
+    }
 }
