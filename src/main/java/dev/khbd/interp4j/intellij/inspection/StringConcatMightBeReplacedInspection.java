@@ -115,7 +115,7 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
                         builder.append(StringUtils.escapeDoubleQuotes((String) literal.getValue()));
                     } else {
                         builder.append("${");
-                        builder.append(operand.getText());
+                        builder.append(StringUtils.escapeDoubleQuotes(operand.getText()));
                         builder.append("}");
                     }
                 }
