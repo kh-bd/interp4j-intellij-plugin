@@ -96,9 +96,9 @@ public class FormatGrammarDefinitionTest {
                         .addPart(new FormatText("Duke's Birthday: "))
                         .addPart(new FormatSpecifier(new NumericIndex(1), new Conversion("tm")))
                         .addPart(new FormatText(" "))
-                        .addPart(new FormatSpecifier(new ImplicitIndex(), new Conversion("te")))
+                        .addPart(new FormatSpecifier(ImplicitIndex.INSTANCE, new Conversion("te")))
                         .addPart(new FormatText(","))
-                        .addPart(new FormatSpecifier(new ImplicitIndex(), new Conversion("tY")))
+                        .addPart(new FormatSpecifier(ImplicitIndex.INSTANCE, new Conversion("tY")))
         );
     }
 }
