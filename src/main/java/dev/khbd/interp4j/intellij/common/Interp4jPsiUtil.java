@@ -39,7 +39,7 @@ public class Interp4jPsiUtil {
         GlobalSearchScope scope = GlobalSearchScope.allScope(element.getProject());
 
         PsiClass psiClass = JavaPsiFacade.getInstance(element.getProject())
-                        .findClass(Interpolations.class.getCanonicalName(), scope);
+                .findClass(Interpolations.class.getCanonicalName(), scope);
 
         return Objects.nonNull(psiClass);
     }
@@ -51,9 +51,23 @@ public class Interp4jPsiUtil {
      * @return {@literal true} if it is a 's' method call and {@literal false} otherwise
      */
     public static boolean isSMethodCall(@NonNull PsiMethodCallExpression methodCall) {
+        return isInterpolatorCall(methodCall, "s");
+    }
+
+    /**
+     * Check is supplied method call a 'fmt' method call.
+     *
+     * @param methodCall method call
+     * @return {@literal true} if it is a 'fmt' method call and {@literal false} otherwise
+     */
+    public static boolean isFmtMethodCall(@NonNull PsiMethodCallExpression methodCall) {
+        return isInterpolatorCall(methodCall, "fmt");
+    }
+
+    private static boolean isInterpolatorCall(@NonNull PsiMethodCallExpression methodCall, @NonNull String methodName) {
         PsiMethod originalMethod = methodCall.resolveMethod();
         return Objects.nonNull(originalMethod)
-                && isMethodFromClassWithName(originalMethod, "s", Interpolations.class, true);
+               && isMethodFromClassWithName(originalMethod, methodName, Interpolations.class, true);
     }
 
     /**
@@ -65,7 +79,7 @@ public class Interp4jPsiUtil {
     public static boolean isInterpolateMethodCall(@NonNull PsiMethodCallExpression methodCall) {
         PsiMethod originalMethod = methodCall.resolveMethod();
         return Objects.nonNull(originalMethod)
-                && isMethodFromClassWithName(originalMethod, "interpolate", SInterpolator.class, false);
+               && isMethodFromClassWithName(originalMethod, "interpolate", SInterpolator.class, false);
     }
 
     /**

@@ -53,7 +53,9 @@
                 shortName="StringConcatMightBeReplacedInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.StringConcatMightBeReplacedInspection"/>
 
-        <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.InterpolatedStringLanguageInjector"/>
+        <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.SInterpolationLanguageInjector"/>
+        <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.FmtInterpolationLanguageInjector"/>
+
         <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.InStringLiteralsImplicitUsageProvider"/>
     </extensions>
 
