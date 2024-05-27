@@ -5,7 +5,7 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei Khadanovich
  */
-public enum FormatExpressionPartKind {
+public enum FmtExpressionPartKind {
 
     TEXT,
     CODE,

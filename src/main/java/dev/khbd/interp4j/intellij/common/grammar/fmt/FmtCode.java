@@ -7,15 +7,15 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei_Khadanovich
  */
-public record FormatCode(String expression, Position position) implements FormatExpressionPart {
+public record FmtCode(String expression, Position position) implements FmtExpressionPart {
 
     @Override
-    public FormatExpressionPartKind kind() {
-        return FormatExpressionPartKind.CODE;
+    public FmtExpressionPartKind kind() {
+        return FmtExpressionPartKind.CODE;
     }
 
     @Override
-    public void visit(FormatExpressionVisitor visitor) {
+    public void visit(FmtExpressionVisitor visitor) {
         visitor.visitCodePart(this);
     }
 }

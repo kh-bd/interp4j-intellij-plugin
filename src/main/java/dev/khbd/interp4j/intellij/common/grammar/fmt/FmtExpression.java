@@ -13,11 +13,11 @@ import java.util.List;
  */
 @ToString
 @EqualsAndHashCode
-public class FormatExpression {
+public class FmtExpression {
 
-    private final List<FormatExpressionPart> parts;
+    private final List<FmtExpressionPart> parts;
 
-    public FormatExpression(List<FormatExpressionPart> parts) {
+    public FmtExpression(List<FmtExpressionPart> parts) {
         this.parts = new ArrayList<>(parts);
     }
 
@@ -26,9 +26,9 @@ public class FormatExpression {
      *
      * @param visitor visitor
      */
-    public void visit(FormatExpressionVisitor visitor) {
+    public void visit(FmtExpressionVisitor visitor) {
         visitor.start();
-        for (FormatExpressionPart part : parts) {
+        for (FmtExpressionPart part : parts) {
             part.visit(visitor);
         }
         visitor.finish();
@@ -39,7 +39,7 @@ public class FormatExpression {
      *
      * @return builder
      */
-    public static FormatExpressionBuilder builder() {
-        return new FormatExpressionBuilder();
+    public static FmtExpressionBuilder builder() {
+        return new FmtExpressionBuilder();
     }
 }

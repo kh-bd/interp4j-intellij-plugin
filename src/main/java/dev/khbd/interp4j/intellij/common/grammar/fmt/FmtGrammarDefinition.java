@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  *
  * @author Sergei Khadanovich
  */
-class FormatGrammarDefinition extends GrammarDefinition {
+class FmtGrammarDefinition extends GrammarDefinition {
 
     private static final String TEXT = "text";
     private static final String CODE = "code";
@@ -35,16 +35,16 @@ class FormatGrammarDefinition extends GrammarDefinition {
     private static final String CODE_TEXT = "codeAndText";
     private static final String SPECIFIER_TEXT = "specifierAndText";
 
-    FormatGrammarDefinition() {
+    FmtGrammarDefinition() {
         def("start",
                 ref(TEXT)
                         .seq(ref(SPECIFIER_TEXT).or(ref(CODE_TEXT)).star())
                         .end()
         );
         action("start", (List<Object> seq) -> {
-            FormatExpressionBuilder builder = FormatExpression.builder();
+            FmtExpressionBuilder builder = FmtExpression.builder();
 
-            FormatText text = (FormatText) seq.get(0);
+            FmtText text = (FmtText) seq.get(0);
             if (!text.isEmpty()) {
                 builder.text(text);
             }
@@ -52,12 +52,12 @@ class FormatGrammarDefinition extends GrammarDefinition {
             if (seq.size() > 1) {
                 List<AndText<?>> other = (List<AndText<?>>) seq.get(1);
                 for (AndText<?> andText : other) {
-                    FormatExpressionPart part = andText.value;
+                    FmtExpressionPart part = andText.value;
 
                     if (part.isCode()) {
-                        builder.code((FormatCode) part);
+                        builder.code((FmtCode) part);
                     } else if (part.isSpecifier()) {
-                        builder.specifier((FormatSpecifier) part);
+                        builder.specifier((FmtSpecifier) part);
                     } else {
                         throw new IllegalStateException("Only specifier and code are supported");
                     }
@@ -73,18 +73,18 @@ class FormatGrammarDefinition extends GrammarDefinition {
 
         def(SPECIFIER_TEXT, ref(SPECIFIER).seq(ref(TEXT)));
         action(SPECIFIER_TEXT, (List<Object> seq) ->
-                new AndText<>((FormatSpecifier) seq.get(0), (FormatText) seq.get(1)));
+                new AndText<>((FmtSpecifier) seq.get(0), (FmtText) seq.get(1)));
 
         def(CODE_TEXT, ref(CODE).seq(ref(TEXT)));
         action(CODE_TEXT, (List<Object> seq) ->
-                new AndText<>((FormatCode) seq.get(0), (FormatText) seq.get(1)));
+                new AndText<>((FmtCode) seq.get(0), (FmtText) seq.get(1)));
 
         def(TEXT, textParser());
-        action(TEXT, (Token token) -> new FormatText(token.getValue(), new Position(token.getStart(), token.getStop())));
+        action(TEXT, (Token token) -> new FmtText(token.getValue(), new Position(token.getStart(), token.getStop())));
 
         // code
         def(CODE, codeWithBrackets().or(codeWithoutBrackets()));
-        action(CODE, (Token token) -> new FormatCode(token.getValue(), new Position(token.getStart(), token.getStop())));
+        action(CODE, (Token token) -> new FmtCode(token.getValue(), new Position(token.getStart(), token.getStop())));
 
         // specifier
         def(SPECIFIER,
@@ -98,7 +98,7 @@ class FormatGrammarDefinition extends GrammarDefinition {
         );
         action(SPECIFIER, (Token token) -> {
             List<Object> args = token.getValue();
-            return new FormatSpecifier(getTyped(args, 1), getTyped(args, 2),
+            return new FmtSpecifier(getTyped(args, 1), getTyped(args, 2),
                     getTyped(args, 3), getTyped(args, 4),
                     getTyped(args, 5), new Position(token.getStart(), token.getStop())
             );
@@ -233,8 +233,8 @@ class FormatGrammarDefinition extends GrammarDefinition {
     }
 
     @Value
-    private static class AndText<T extends FormatExpressionPart> {
+    private static class AndText<T extends FmtExpressionPart> {
         T value;
-        FormatText text;
+        FmtText text;
     }
 }

@@ -5,17 +5,17 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei Khadanovich
  */
-public sealed interface FormatExpressionPart permits FormatCode, FormatSpecifier, FormatText {
+public sealed interface FmtExpressionPart permits FmtCode, FmtSpecifier, FmtText {
 
     /**
      * Get expression part kind.
      */
-    FormatExpressionPartKind kind();
+    FmtExpressionPartKind kind();
 
     /**
      * Visit expression part.
      */
-    void visit(FormatExpressionVisitor visitor);
+    void visit(FmtExpressionVisitor visitor);
 
     /**
      * Get part position.
@@ -28,7 +28,7 @@ public sealed interface FormatExpressionPart permits FormatCode, FormatSpecifier
      * @return {@literal true} if expression part is text and {@literal false} otherwise
      */
     default boolean isText() {
-        return kind() == FormatExpressionPartKind.TEXT;
+        return kind() == FmtExpressionPartKind.TEXT;
     }
 
     /**
@@ -37,7 +37,7 @@ public sealed interface FormatExpressionPart permits FormatCode, FormatSpecifier
      * @return {@literal true} if expression part is specifier and {@literal false} otherwise
      */
     default boolean isSpecifier() {
-        return kind() == FormatExpressionPartKind.SPECIFIER;
+        return kind() == FmtExpressionPartKind.SPECIFIER;
     }
 
     /**
@@ -46,6 +46,6 @@ public sealed interface FormatExpressionPart permits FormatCode, FormatSpecifier
      * @return {@literal true} if expression part is code and {@literal false} otherwise
      */
     default boolean isCode() {
-        return kind() == FormatExpressionPartKind.CODE;
+        return kind() == FmtExpressionPartKind.CODE;
     }
 }

@@ -11,22 +11,22 @@ import java.util.Optional;
  *
  * @author Sergei_Khadanovich
  */
-public final class FormatExpressionParser {
+public final class FmtExpressionParser {
 
-    private static final FormatExpressionParser INSTANCE = new FormatExpressionParser();
+    private static final FmtExpressionParser INSTANCE = new FmtExpressionParser();
 
-    private FormatExpressionParser() {
+    private FmtExpressionParser() {
     }
 
-    private final GrammarParser parser = new GrammarParser(new FormatGrammarDefinition());
+    private final GrammarParser parser = new GrammarParser(new FmtGrammarDefinition());
 
     /**
-     * Parse supplied string literal to {@link FormatExpression}.
+     * Parse supplied string literal to {@link FmtExpression}.
      *
      * @param literal string literal
-     * @return parsed {@link FormatExpression} or empty if parsing was failed
+     * @return parsed {@link FmtExpression} or empty if parsing was failed
      */
-    public Optional<FormatExpression> parse(@NonNull String literal) {
+    public Optional<FmtExpression> parse(@NonNull String literal) {
         Result result = parser.parse(literal);
         if (result.isFailure()) {
             return Optional.empty();
@@ -34,7 +34,7 @@ public final class FormatExpressionParser {
         return Optional.of(result.get());
     }
 
-    public static FormatExpressionParser getInstance() {
+    public static FmtExpressionParser getInstance() {
         return INSTANCE;
     }
 }

@@ -10,11 +10,11 @@ import java.util.List;
  *
  * @author Sergei Khadanovich
  */
-public class FormatExpressionBuilder {
+public class FmtExpressionBuilder {
 
-    private final List<FormatExpressionPart> parts = new ArrayList<>();
+    private final List<FmtExpressionPart> parts = new ArrayList<>();
 
-    FormatExpressionBuilder() {
+    FmtExpressionBuilder() {
     }
 
     /**
@@ -22,7 +22,7 @@ public class FormatExpressionBuilder {
      *
      * @param text text part
      */
-    public FormatExpressionBuilder text(@NonNull FormatText text) {
+    public FmtExpressionBuilder text(@NonNull FmtText text) {
         this.parts.add(text);
         return this;
     }
@@ -32,7 +32,7 @@ public class FormatExpressionBuilder {
      *
      * @param code code part
      */
-    public FormatExpressionBuilder code(@NonNull FormatCode code) {
+    public FmtExpressionBuilder code(@NonNull FmtCode code) {
         this.parts.add(code);
         return this;
     }
@@ -42,7 +42,7 @@ public class FormatExpressionBuilder {
      *
      * @param specifier specifier part
      */
-    public FormatExpressionBuilder specifier(@NonNull FormatSpecifier specifier) {
+    public FmtExpressionBuilder specifier(@NonNull FmtSpecifier specifier) {
         this.parts.add(specifier);
         return this;
     }
@@ -50,7 +50,7 @@ public class FormatExpressionBuilder {
     /**
      * Create format expression.
      */
-    public FormatExpression build() {
-        return new FormatExpression(parts);
+    public FmtExpression build() {
+        return new FmtExpression(parts);
     }
 }

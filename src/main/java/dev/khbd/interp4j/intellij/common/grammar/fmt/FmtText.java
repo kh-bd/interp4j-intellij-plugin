@@ -5,15 +5,15 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei Khadanovich
  */
-public record FormatText(String text, Position position) implements FormatExpressionPart {
+public record FmtText(String text, Position position) implements FmtExpressionPart {
 
     @Override
-    public FormatExpressionPartKind kind() {
-        return FormatExpressionPartKind.TEXT;
+    public FmtExpressionPartKind kind() {
+        return FmtExpressionPartKind.TEXT;
     }
 
     @Override
-    public void visit(FormatExpressionVisitor visitor) {
+    public void visit(FmtExpressionVisitor visitor) {
         visitor.visitTextPart(this);
     }
 

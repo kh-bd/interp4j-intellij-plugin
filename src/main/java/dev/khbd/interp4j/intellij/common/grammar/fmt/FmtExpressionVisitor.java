@@ -5,7 +5,7 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei_Khadanovich
  */
-public interface FormatExpressionVisitor {
+public interface FmtExpressionVisitor {
 
     /**
      * Start traversing.
@@ -18,7 +18,7 @@ public interface FormatExpressionVisitor {
      *
      * @param text text part
      */
-    default void visitTextPart(FormatText text) {
+    default void visitTextPart(FmtText text) {
     }
 
     /**
@@ -26,7 +26,7 @@ public interface FormatExpressionVisitor {
      *
      * @param code code part
      */
-    default void visitCodePart(FormatCode code) {
+    default void visitCodePart(FmtCode code) {
     }
 
     /**
@@ -34,7 +34,7 @@ public interface FormatExpressionVisitor {
      *
      * @param specifier specifier part
      */
-    default void visitSpecifierPart(FormatSpecifier specifier) {
+    default void visitSpecifierPart(FmtSpecifier specifier) {
     }
 
     /**
