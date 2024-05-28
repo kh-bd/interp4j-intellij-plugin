@@ -72,7 +72,7 @@ public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspe
         /**
          * Validate expression for correctness.
          */
-        protected void validate(PsiMethodCallExpression methodCall, String literal, E expression) {
+        protected void validate(PsiLiteralExpression literal, E expression) {
         }
 
         private void inspectExpression(PsiMethodCallExpression methodCall, PsiExpression expression) {
@@ -93,7 +93,7 @@ public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspe
                 return;
             }
 
-            parser.apply(value).ifPresentOrElse(inspectParsed(methodCall, value), () -> unpassableExpression(literalExpr));
+            parser.apply(value).ifPresentOrElse(inspectParsed(methodCall, literalExpr), () -> unpassableExpression(literalExpr));
         }
 
         private void inspectPolyadicExpression(PsiMethodCallExpression methodCall, PsiPolyadicExpression polyExpr) {
@@ -126,7 +126,7 @@ public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspe
 
                 E expr = parseResult.get();
 
-                validate(methodCall, text, expr);
+                validate((PsiLiteralExpression) operand, expr);
 
                 if (needInterpolationPredicate.apply(expr)) {
                     needInterpolation++;
@@ -144,13 +144,13 @@ public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspe
             return "PLUS".equals(token.toString());
         }
 
-        private Consumer<E> inspectParsed(PsiMethodCallExpression methodCall, String literal) {
+        private Consumer<E> inspectParsed(PsiMethodCallExpression methodCall, PsiLiteralExpression literal) {
             return expr -> {
                 if (!needInterpolationPredicate.apply(expr)) {
                     noNeedInterpolation(methodCall);
                     return;
                 }
-                validate(methodCall, literal, expr);
+                validate(literal, expr);
             };
         }
 

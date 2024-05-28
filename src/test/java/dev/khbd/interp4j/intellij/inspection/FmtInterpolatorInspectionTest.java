@@ -40,8 +40,29 @@ public class FmtInterpolatorInspectionTest extends BaseIntellijTest {
 
         fixture.testHighlighting(true, false, true);
         List<IntentionAction> intentions = fixture.getAllQuickFixes();
-        assertThat(intentions).hasSize(3);
+        assertThat(intentions).hasSize(2);
         launchActions(intentions);
         fixture.checkResultByFile("inspection/fmt/without_any_expression/Main_after.java");
+    }
+
+    @Test
+    public void inspect_specifierWithoutCode_verifyError() {
+        fixture.configureByFiles("inspection/fmt/specifier_no_code/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
+    @Test
+    public void inspect_codeWithSpecialSpecifiers_verifyError() {
+        fixture.configureByFiles("inspection/fmt/code_with_special_specifiers/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+    }
+
+    @Test
+    public void inspect_codeWithoutSpecifiers_verifyError() {
+        fixture.configureByFiles("inspection/fmt/code_without_specifiers/Main.java");
+
+        fixture.testHighlighting(true, false, true);
     }
 }
