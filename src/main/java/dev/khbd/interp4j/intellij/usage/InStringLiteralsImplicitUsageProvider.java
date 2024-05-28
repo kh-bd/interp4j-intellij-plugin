@@ -9,6 +9,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Query;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +32,10 @@ public class InStringLiteralsImplicitUsageProvider implements ImplicitUsageProvi
         return false;
     }
 
-    private record IsUsedImplicitly(PsiElement element) implements Computable<Boolean> {
+    @RequiredArgsConstructor
+    private static class IsUsedImplicitly implements Computable<Boolean> {
+
+        private final PsiElement element;
 
         @Override
         public Boolean compute() {

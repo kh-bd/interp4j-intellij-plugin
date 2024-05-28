@@ -50,8 +50,13 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
         @Override
         public void visitElement(@NotNull PsiElement element) {
             if (!Interp4jPsiUtil.isInterpolationEnabled(element)
-                    || !(element instanceof PsiMethodCallExpression methodCall)
-                    || !Interp4jPsiUtil.isStringFormatCall(methodCall)) {
+                || !(element instanceof PsiMethodCallExpression)) {
+                return;
+            }
+
+            PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
+
+            if (!Interp4jPsiUtil.isStringFormatCall(methodCall)) {
                 return;
             }
 
@@ -76,7 +81,7 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
             }
 
             if (!isSimpleEnough(parsedExpression)
-                    || parsedExpression.specifiersCount() != arguments.getExpressionCount() - 1) {
+                || parsedExpression.specifiersCount() != arguments.getExpressionCount() - 1) {
                 // expression is too complicated to rewrite it or
                 // arguments count is wrong
                 return;
@@ -91,8 +96,8 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
         }
 
         private String getStringLiteralText(PsiExpression expression) {
-            if (expression instanceof PsiPolyadicExpression polyExpr) {
-                return isCorrectExpressionType(polyExpr) ? expression.getText() : null;
+            if (expression instanceof PsiPolyadicExpression) {
+                return isCorrectExpressionType((PsiPolyadicExpression) expression) ? expression.getText() : null;
             }
 
             return Interp4jPsiUtil.getStringLiteralText(expression);
@@ -127,11 +132,11 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
             @Override
             public void visitSpecifier(FormatSpecifier specifier) {
-                if (specifier.index() != null
-                        || specifier.flags() != null
-                        || specifier.width() != null
-                        || specifier.precision() != null
-                        || !ALLOWED_CONVERSIONS.contains(specifier.conversion().symbols())) {
+                if (specifier.getIndex() != null
+                    || specifier.getFlags() != null
+                    || specifier.getWidth() != null
+                    || specifier.getPrecision() != null
+                    || !ALLOWED_CONVERSIONS.contains(specifier.getConversion().getSymbols())) {
                     simple = false;
                 }
             }
@@ -194,7 +199,7 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
             @Override
             public void visitText(FormatText text) {
-                builder.append(text.text());
+                builder.append(text.getText());
             }
 
             @Override

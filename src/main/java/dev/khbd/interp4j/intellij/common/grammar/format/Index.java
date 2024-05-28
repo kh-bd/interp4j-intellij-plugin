@@ -10,5 +10,5 @@ package dev.khbd.interp4j.intellij.common.grammar.format;
  * @author Sergei_Khadanovich
  * @see java.util.Formatter
  */
-public sealed interface Index permits NumericIndex, ImplicitIndex {
+public interface Index {
 }

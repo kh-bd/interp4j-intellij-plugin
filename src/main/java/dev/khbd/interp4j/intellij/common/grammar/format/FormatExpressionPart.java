@@ -5,5 +5,5 @@ package dev.khbd.interp4j.intellij.common.grammar.format;
  *
  * @author Sergei_Khadanovich
  */
-public sealed interface FormatExpressionPart permits FormatText, FormatSpecifier {
+public interface FormatExpressionPart {
 }

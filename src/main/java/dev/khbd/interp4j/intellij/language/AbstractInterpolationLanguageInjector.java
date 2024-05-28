@@ -50,10 +50,10 @@ public abstract class AbstractInterpolationLanguageInjector implements MultiHost
     protected boolean isInterpolateMethodCall(PsiLiteralExpression literal) {
         PsiElement parent = literal.getParent();
 
-        if (parent instanceof PsiExpressionList list) {
-            return isExpressionListOfInterpolateCall(list);
-        } else if (parent instanceof PsiPolyadicExpression poly) {
-            return mayBeInterpolateCallWithConcatenatedLiterals(poly);
+        if (parent instanceof PsiExpressionList) {
+            return isExpressionListOfInterpolateCall((PsiExpressionList) parent);
+        } else if (parent instanceof PsiPolyadicExpression) {
+            return mayBeInterpolateCallWithConcatenatedLiterals((PsiPolyadicExpression) parent);
         }
 
         return false;
@@ -68,16 +68,16 @@ public abstract class AbstractInterpolationLanguageInjector implements MultiHost
 
     private boolean isExpressionListOfInterpolateCall(PsiExpressionList expressionList) {
         PsiElement mayBeMethodCall = expressionList.getParent();
-        if (!(mayBeMethodCall instanceof PsiMethodCallExpression methodCall)) {
+        if (!(mayBeMethodCall instanceof PsiMethodCallExpression)) {
             return false;
         }
-        return callPredicate.test(methodCall);
+        return callPredicate.test((PsiMethodCallExpression) mayBeMethodCall);
     }
 
     private boolean mayBeInterpolateCallWithConcatenatedLiterals(PsiPolyadicExpression poly) {
         PsiElement parent = poly.getParent();
-        if (parent instanceof PsiExpressionList list) {
-            return isExpressionListOfInterpolateCall(list);
+        if (parent instanceof PsiExpressionList) {
+            return isExpressionListOfInterpolateCall((PsiExpressionList) parent);
         }
         return false;
     }

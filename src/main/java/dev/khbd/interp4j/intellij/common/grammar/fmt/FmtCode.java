@@ -1,5 +1,7 @@
 package dev.khbd.interp4j.intellij.common.grammar.fmt;
 
+import lombok.Value;
+
 /**
  * Code part in s expression.
  *
@@ -7,7 +9,11 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei_Khadanovich
  */
-public record FmtCode(String expression, Position position) implements FmtExpressionPart {
+@Value
+public class FmtCode implements FmtExpressionPart {
+
+    String expression;
+    Position position;
 
     @Override
     public FmtExpressionPartKind kind() {

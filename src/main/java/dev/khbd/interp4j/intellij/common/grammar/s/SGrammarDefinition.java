@@ -1,5 +1,6 @@
 package dev.khbd.interp4j.intellij.common.grammar.s;
 
+import lombok.Value;
 import org.petitparser.context.Token;
 import org.petitparser.parser.Parser;
 import org.petitparser.parser.primitive.CharacterParser;
@@ -31,8 +32,8 @@ class SGrammarDefinition extends GrammarDefinition {
             if (seq.size() > 1) {
                 List<CodeAndText> other = (List<CodeAndText>) seq.get(1);
                 for (CodeAndText codeAndText : other) {
-                    expression.addPart(codeAndText.code());
-                    addNotEmptyTextPart(expression, codeAndText.text());
+                    expression.addPart(codeAndText.getCode());
+                    addNotEmptyTextPart(expression, codeAndText.getText());
                 }
             }
             return expression;
@@ -50,7 +51,7 @@ class SGrammarDefinition extends GrammarDefinition {
     }
 
     private void addNotEmptyTextPart(SExpression expression, SText text) {
-        if (text.text().isEmpty()) {
+        if (text.isEmpty()) {
             return;
         }
         expression.addPart(text);
@@ -95,6 +96,10 @@ class SGrammarDefinition extends GrammarDefinition {
                 .token();
     }
 
-    private record CodeAndText(SCode code, SText text) {
+    @Value
+    private static class CodeAndText {
+
+        SCode code;
+        SText text;
     }
 }

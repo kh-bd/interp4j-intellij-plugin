@@ -5,7 +5,7 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei Khadanovich
  */
-public sealed interface FmtExpressionPart permits FmtCode, FmtSpecifier, FmtText {
+public interface FmtExpressionPart {
 
     /**
      * Get expression part kind.
@@ -20,7 +20,7 @@ public sealed interface FmtExpressionPart permits FmtCode, FmtSpecifier, FmtText
     /**
      * Get part position.
      */
-    Position position();
+    Position getPosition();
 
     /**
      * Is expression part text or not.

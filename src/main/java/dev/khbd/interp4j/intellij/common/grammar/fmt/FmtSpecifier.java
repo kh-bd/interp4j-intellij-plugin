@@ -1,5 +1,8 @@
 package dev.khbd.interp4j.intellij.common.grammar.fmt;
 
+import lombok.AllArgsConstructor;
+import lombok.Value;
+
 /**
  * Format specifier in format expression.
  *
@@ -7,8 +10,16 @@ package dev.khbd.interp4j.intellij.common.grammar.fmt;
  *
  * @author Sergei_Khadanovich
  */
-public record FmtSpecifier(Index index, String flags, Integer width, Integer precision,
-                           Conversion conversion, Position position) implements FmtExpressionPart {
+@Value
+@AllArgsConstructor
+public class FmtSpecifier implements FmtExpressionPart {
+
+    Index index;
+    String flags;
+    Integer width;
+    Integer precision;
+    Conversion conversion;
+    Position position;
 
     FmtSpecifier(Conversion conversion, Position position) {
         this(null, null, null, null, conversion, position);
@@ -29,10 +40,10 @@ public record FmtSpecifier(Index index, String flags, Integer width, Integer pre
     }
 
     public boolean isPercent() {
-        return conversion.symbols().equals("%");
+        return conversion.getSymbols().equals("%");
     }
 
     public boolean isNewLine() {
-        return conversion.symbols().equals("n");
+        return conversion.getSymbols().equals("n");
     }
 }

@@ -16,10 +16,10 @@ public interface SExpressionVisitor {
      * @param part expression part
      */
     default void visit(SExpressionPart part) {
-        if (part instanceof SText text) {
-            visitText(text);
-        } else if (part instanceof SCode code) {
-            visitCode(code);
+        if (part instanceof SText) {
+            visitText((SText) part);
+        } else if (part instanceof SCode) {
+            visitCode((SCode) part);
         }
     }
 

@@ -44,8 +44,8 @@ public class FmtInterpolationLanguageInjector extends AbstractInterpolationLangu
 
         @Override
         public void visitCodePart(FmtCode code) {
-            Position position = code.position();
-            inject(position.start(), position.end());
+            Position position = code.getPosition();
+            inject(position.getStart(), position.getEnd());
         }
     }
 }

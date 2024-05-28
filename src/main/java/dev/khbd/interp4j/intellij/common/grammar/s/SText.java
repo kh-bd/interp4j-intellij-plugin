@@ -1,5 +1,7 @@
 package dev.khbd.interp4j.intellij.common.grammar.s;
 
+import lombok.Value;
+
 /**
  * Text part in s expression.
  *
@@ -7,5 +9,14 @@ package dev.khbd.interp4j.intellij.common.grammar.s;
  *
  * @author Sergei_Khadanovich
  */
-public record SText(String text, int start, int end) implements SExpressionPart {
+@Value
+public class SText implements SExpressionPart {
+
+    String text;
+    int start;
+    int end;
+
+    public boolean isEmpty() {
+        return text.isEmpty();
+    }
 }

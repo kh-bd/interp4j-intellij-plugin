@@ -1,5 +1,7 @@
 package dev.khbd.interp4j.intellij.common.grammar.format;
 
+import lombok.Value;
+
 /**
  * Conversion part in format specifiers.
  *
@@ -8,5 +10,8 @@ package dev.khbd.interp4j.intellij.common.grammar.format;
  *
  * @author Sergei_Khadanovich
  */
-public record Conversion(String symbols) {
+@Value
+public class Conversion {
+
+    String symbols;
 }

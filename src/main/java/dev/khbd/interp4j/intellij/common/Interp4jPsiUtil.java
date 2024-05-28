@@ -128,10 +128,11 @@ public class Interp4jPsiUtil {
      */
     @Nullable
     public static String getStringLiteralText(@NonNull PsiExpression expression) {
-        if (!(expression instanceof PsiLiteralExpression literalExpr)) {
+        if (!(expression instanceof PsiLiteralExpression)) {
             return null;
         }
 
+        PsiLiteralExpression literalExpr = (PsiLiteralExpression) expression;
         Object value = literalExpr.getValue();
 
         if (Objects.isNull(value)) {
@@ -153,9 +154,10 @@ public class Interp4jPsiUtil {
      * @return {@literal true} if expression is string literal and {@literal false} otherwise
      */
     public static boolean isStringLiteral(@NonNull PsiExpression expression) {
-        if (!(expression instanceof PsiLiteralExpression literalExpr)) {
+        if (!(expression instanceof PsiLiteralExpression)) {
             return false;
         }
+        PsiLiteralExpression literalExpr = (PsiLiteralExpression) expression;
         // value can be null, but it's correct because null instanceof String is false
         return literalExpr.getValue() instanceof String;
     }

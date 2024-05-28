@@ -4,6 +4,7 @@ import static org.petitparser.parser.primitive.CharacterParser.anyOf;
 import static org.petitparser.parser.primitive.CharacterParser.digit;
 import static org.petitparser.parser.primitive.CharacterParser.noneOf;
 
+import lombok.Value;
 import org.petitparser.parser.Parser;
 import org.petitparser.parser.primitive.CharacterParser;
 import org.petitparser.tools.GrammarDefinition;
@@ -34,9 +35,9 @@ class FormatGrammarDefinition extends GrammarDefinition {
             if (args.size() > 1) {
                 List<SpecifierAndText> other = getTyped(args, 1);
                 for (SpecifierAndText specifierAndText : other) {
-                    expression.addPart(specifierAndText.specifier);
-                    if (!specifierAndText.text.isEmpty()) {
-                        expression.addPart(specifierAndText.text);
+                    expression.addPart(specifierAndText.getSpecifier());
+                    if (!specifierAndText.getText().isEmpty()) {
+                        expression.addPart(specifierAndText.getText());
                     }
                 }
             }
@@ -152,7 +153,11 @@ class FormatGrammarDefinition extends GrammarDefinition {
 
     }
 
-    private record SpecifierAndText(FormatSpecifier specifier, FormatText text) {
+    @Value
+    private static class SpecifierAndText {
+
+        FormatSpecifier specifier;
+        FormatText text;
     }
 
     @SuppressWarnings("unchecked")

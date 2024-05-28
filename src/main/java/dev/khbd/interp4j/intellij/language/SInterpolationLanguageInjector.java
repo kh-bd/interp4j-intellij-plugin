@@ -43,7 +43,7 @@ public class SInterpolationLanguageInjector extends AbstractInterpolationLanguag
 
         @Override
         public void visitCode(SCode code) {
-            inject(code.start(), code.end());
+            inject(code.getStart(), code.getEnd());
         }
     }
 }

@@ -5,5 +5,5 @@ package dev.khbd.interp4j.intellij.common.grammar.s;
  *
  * @author Sergei_Khadanovich
  */
-public sealed interface SExpressionPart permits SText, SCode {
+public interface SExpressionPart {
 }

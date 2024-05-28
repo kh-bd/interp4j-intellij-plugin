@@ -1,5 +1,8 @@
 package dev.khbd.interp4j.intellij.common.grammar.format;
 
+import lombok.AllArgsConstructor;
+import lombok.Value;
+
 /**
  * Format specifier in format expression.
  *
@@ -7,8 +10,15 @@ package dev.khbd.interp4j.intellij.common.grammar.format;
  *
  * @author Sergei_Khadanovich
  */
-public record FormatSpecifier(Index index, String flags, Integer width, Integer precision,
-                              Conversion conversion) implements FormatExpressionPart {
+@Value
+@AllArgsConstructor
+public class FormatSpecifier implements FormatExpressionPart {
+
+    Index index;
+    String flags;
+    Integer width;
+    Integer precision;
+    Conversion conversion;
 
     FormatSpecifier(Conversion conversion) {
         this(null, null, null, null, conversion);

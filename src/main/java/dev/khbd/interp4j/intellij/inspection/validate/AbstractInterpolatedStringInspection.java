@@ -51,9 +51,11 @@ public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspe
 
         @Override
         public void visitElement(PsiElement element) {
-            if (!(element instanceof PsiMethodCallExpression methodCall)) {
+            if (!(element instanceof PsiMethodCallExpression)) {
                 return;
             }
+
+            PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
 
             if (!callPredicate.test(methodCall)) {
                 return;
@@ -76,10 +78,10 @@ public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspe
         }
 
         private void inspectExpression(PsiMethodCallExpression methodCall, PsiExpression expression) {
-            if (expression instanceof PsiLiteralExpression literal) {
-                inspectLiteralExpression(methodCall, literal);
-            } else if (expression instanceof PsiPolyadicExpression poly) {
-                inspectPolyadicExpression(methodCall, poly);
+            if (expression instanceof PsiLiteralExpression) {
+                inspectLiteralExpression(methodCall, (PsiLiteralExpression) expression);
+            } else if (expression instanceof PsiPolyadicExpression) {
+                inspectPolyadicExpression(methodCall, (PsiPolyadicExpression) expression);
             } else {
                 wrongExpressionType(expression);
             }

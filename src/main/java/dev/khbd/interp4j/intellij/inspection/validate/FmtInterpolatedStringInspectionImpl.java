@@ -103,22 +103,22 @@ public class FmtInterpolatedStringInspectionImpl extends AbstractInterpolatedStr
             }
 
             private void codeMustBeUsedAfterSpecifier(FmtExpressionPart part) {
-                Position position = part.position();
+                Position position = part.getPosition();
                 holder.registerProblem(
                         literal,
                         Interp4jBundle.getMessage("inspection.interpolated.string.fmt.code.must.be.used.after.specifier"),
                         ProblemHighlightType.GENERIC_ERROR,
-                        new TextRange(position.start(), position.end())
+                        new TextRange(position.getStart(), position.getEnd())
                 );
             }
 
             private void codeBeforeSpecialSpecifiers(FmtCode code) {
-                Position position = code.position();
+                Position position = code.getPosition();
                 holder.registerProblem(
                         literal,
                         Interp4jBundle.getMessage("inspection.interpolated.string.fmt.code.before.special.specifiers"),
                         ProblemHighlightType.GENERIC_ERROR,
-                        new TextRange(position.start(), position.end())
+                        new TextRange(position.getStart(), position.getEnd())
                 );
             }
         }

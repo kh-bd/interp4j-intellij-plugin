@@ -44,9 +44,13 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
         @Override
         public void visitElement(PsiElement element) {
             if (!Interp4jPsiUtil.isInterpolationEnabled(element)
-                    || !(element instanceof PsiPolyadicExpression poly)
-                    || !isPlusExpression(poly)
-                    || element.getParent() instanceof PsiNameValuePair) {
+                || !(element instanceof PsiPolyadicExpression)) {
+                return;
+            }
+
+            PsiPolyadicExpression poly = (PsiPolyadicExpression) element;
+
+            if (!isPlusExpression(poly) || element.getParent() instanceof PsiNameValuePair) {
                 return;
             }
 

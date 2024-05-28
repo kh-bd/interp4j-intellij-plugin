@@ -1,11 +1,17 @@
 package dev.khbd.interp4j.intellij.common.grammar.fmt;
 
+import lombok.Value;
+
 /**
  * Text block in format expression.
  *
  * @author Sergei Khadanovich
  */
-public record FmtText(String text, Position position) implements FmtExpressionPart {
+@Value
+public class FmtText implements FmtExpressionPart {
+
+    String text;
+    Position position;
 
     @Override
     public FmtExpressionPartKind kind() {
@@ -20,7 +26,7 @@ public record FmtText(String text, Position position) implements FmtExpressionPa
     /**
      * Check if text block is empty or not.
      */
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return text.isEmpty();
     }
 }
