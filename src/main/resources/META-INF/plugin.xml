@@ -16,10 +16,10 @@
                 groupKey="inspections"
                 groupPath="Java"
                 bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
-                key="inspection.interpolated.string"
+
+                key="inspection.interpolated.string.s"
                 shortName="SInterpolatorInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.validate.SInterpolatedStringInspectionImpl"/>
-
         <localInspection
                 language="JAVA"
                 enabledByDefault="true"
@@ -28,7 +28,7 @@
                 groupKey="inspections"
                 groupPath="Java"
                 bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
-                key="inspection.interpolated.string"
+                key="inspection.interpolated.string.fmt"
                 shortName="FmtInterpolatorInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.validate.FmtInterpolatedStringInspectionImpl"/>
 
