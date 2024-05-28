@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Sergei_Khadanovich
  */
-public class SInterpolatorInspection extends BaseIntellijTest {
+public class SInterpolatorInspectionTest extends BaseIntellijTest {
 
     @BeforeMethod
     public void initInspection() {
