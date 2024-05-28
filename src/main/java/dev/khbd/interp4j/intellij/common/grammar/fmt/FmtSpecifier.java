@@ -27,4 +27,12 @@ public record FmtSpecifier(Index index, String flags, Integer width, Integer pre
     public void visit(FmtExpressionVisitor visitor) {
         visitor.visitSpecifierPart(this);
     }
+
+    public boolean isPercent() {
+        return conversion.symbols().equals("%");
+    }
+
+    public boolean isNewLine() {
+        return conversion.symbols().equals("n");
+    }
 }

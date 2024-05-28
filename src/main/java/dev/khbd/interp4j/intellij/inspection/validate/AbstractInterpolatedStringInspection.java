@@ -1,4 +1,4 @@
-package dev.khbd.interp4j.intellij.inspection;
+package dev.khbd.interp4j.intellij.inspection.validate;
 
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -21,58 +21,79 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.tree.IElementType;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
-import dev.khbd.interp4j.intellij.common.grammar.s.SExpression;
-import dev.khbd.interp4j.intellij.common.grammar.s.SExpressionParser;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author Sergei_Khadanovich
  */
-public class InterpolatedStringInspection extends LocalInspectionTool {
+@RequiredArgsConstructor
+public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspectionTool {
+
+    private final Predicate<PsiMethodCallExpression> callPredicate;
+    private final Function<String, Optional<E>> parser;
+    private final Function<E, Boolean> needInterpolationPredicate;
 
     @Override
     public PsiElementVisitor buildVisitor(ProblemsHolder holder, boolean isOnTheFly) {
-        return new SMethodInvocationVisitor(holder);
+        return new InterpolatorMethodInvocationVisitor(holder);
     }
 
     @RequiredArgsConstructor
-    static class SMethodInvocationVisitor extends PsiElementVisitor {
+    protected class InterpolatorMethodInvocationVisitor extends PsiElementVisitor {
 
-        private final ProblemsHolder holder;
+        protected final ProblemsHolder holder;
 
         @Override
         public void visitElement(PsiElement element) {
-            if (!(element instanceof PsiMethodCallExpression)) {
+            if (!(element instanceof PsiMethodCallExpression methodCall)) {
                 return;
             }
 
-            PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
-            if (!Interp4jPsiUtil.isSMethodCall(methodCall)) {
+            if (!callPredicate.test(methodCall)) {
                 return;
             }
 
             PsiExpressionList arguments = methodCall.getArgumentList();
             if (arguments.isEmpty()) {
                 // maybe, user didn't complete typing
-                // s function without arguments is a compile-time error
+                // interpolator function without arguments is a compile-time error
                 return;
             }
 
             inspectExpression(methodCall, arguments.getExpressions()[0]);
         }
 
+        /**
+         * Validate expression for correctness.
+         */
+        protected void validate(PsiMethodCallExpression methodCall, String literal, E expression) {
+        }
+
         private void inspectExpression(PsiMethodCallExpression methodCall, PsiExpression expression) {
-            if (expression instanceof PsiLiteralExpression) {
-                inspectLiteralExpression(methodCall, (PsiLiteralExpression) expression);
-            } else if (expression instanceof PsiPolyadicExpression) {
-                inspectPolyadicExpression(methodCall, (PsiPolyadicExpression) expression);
+            if (expression instanceof PsiLiteralExpression literal) {
+                inspectLiteralExpression(methodCall, literal);
+            } else if (expression instanceof PsiPolyadicExpression poly) {
+                inspectPolyadicExpression(methodCall, poly);
             } else {
                 wrongExpressionType(expression);
             }
+        }
+
+        private void inspectLiteralExpression(PsiMethodCallExpression methodCall,
+                                              PsiLiteralExpression literalExpr) {
+            String value = Interp4jPsiUtil.getStringLiteralText(literalExpr);
+            if (Objects.isNull(value)) {
+                wrongExpressionType(literalExpr);
+                return;
+            }
+
+            parser.apply(value).ifPresentOrElse(inspectParsed(methodCall, value), () -> unpassableExpression(literalExpr));
         }
 
         private void inspectPolyadicExpression(PsiMethodCallExpression methodCall, PsiPolyadicExpression polyExpr) {
@@ -91,7 +112,7 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
                     return;
                 }
 
-                Optional<SExpression> parseResult = SExpressionParser.getInstance().parse(text);
+                Optional<E> parseResult = parser.apply(text);
 
                 if (parseResult.isEmpty()) {
                     // Expression can not be parsed,
@@ -103,15 +124,18 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
                     continue;
                 }
 
-                SExpression sExpr = parseResult.get();
-                if (sExpr.hasAnyCode()) {
+                E expr = parseResult.get();
+
+                validate(methodCall, text, expr);
+
+                if (needInterpolationPredicate.apply(expr)) {
                     needInterpolation++;
                 }
             }
 
             // no one part contains expressions for interpolation
             if (needInterpolation == 0) {
-                interpolationWithoutCodeBlocks(methodCall);
+                noNeedInterpolation(methodCall);
             }
         }
 
@@ -120,31 +144,22 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
             return "PLUS".equals(token.toString());
         }
 
-        private void inspectLiteralExpression(PsiMethodCallExpression methodCall,
-                                              PsiLiteralExpression literalExpr) {
-            String value = Interp4jPsiUtil.getStringLiteralText(literalExpr);
-            if (Objects.isNull(value)) {
-                wrongExpressionType(literalExpr);
-                return;
-            }
-            SExpressionParser.getInstance().parse(value)
-                    .ifPresentOrElse(inspectParsed(methodCall), () -> unpassableExpression(literalExpr));
-        }
-
-        private Consumer<SExpression> inspectParsed(PsiMethodCallExpression methodCall) {
-            return sExpr -> {
-                if (!sExpr.hasAnyCode()) {
-                    interpolationWithoutCodeBlocks(methodCall);
+        private Consumer<E> inspectParsed(PsiMethodCallExpression methodCall, String literal) {
+            return expr -> {
+                if (!needInterpolationPredicate.apply(expr)) {
+                    noNeedInterpolation(methodCall);
+                    return;
                 }
+                validate(methodCall, literal, expr);
             };
         }
 
-        private void interpolationWithoutCodeBlocks(PsiMethodCallExpression methodCall) {
+        private void noNeedInterpolation(PsiMethodCallExpression methodCall) {
             holder.registerProblem(
                     methodCall,
-                    Interp4jBundle.getMessage("inspection.interpolated.string.no.one.expression.found"),
+                    Interp4jBundle.getMessage("inspection.interpolated.string.no.need.interpolation"),
                     ProblemHighlightType.WARNING,
-                    new RemoteSMethodCallLocalQuickFix()
+                    new RemoteMethodCallLocalQuickFix()
             );
         }
 
@@ -153,7 +168,7 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
                     expression,
                     Interp4jBundle.getMessage("inspection.interpolated.string.expression.can.not.be.parsed"),
                     ProblemHighlightType.GENERIC_ERROR,
-                    new RemoteSMethodCallLocalQuickFix()
+                    new RemoteMethodCallLocalQuickFix()
             );
         }
 
@@ -166,11 +181,11 @@ public class InterpolatedStringInspection extends LocalInspectionTool {
         }
     }
 
-    private static class RemoteSMethodCallLocalQuickFix implements LocalQuickFix {
+    private static class RemoteMethodCallLocalQuickFix implements LocalQuickFix {
 
         @Override
         public String getFamilyName() {
-            return Interp4jBundle.getMessage("inspection.interpolated.string.no.one.expression.found.remove.s.call");
+            return Interp4jBundle.getMessage("inspection.interpolated.string.no.need.interpolation.remove.method.call");
         }
 
         @Override

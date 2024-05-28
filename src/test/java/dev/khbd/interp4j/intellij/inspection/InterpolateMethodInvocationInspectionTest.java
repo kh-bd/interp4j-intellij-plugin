@@ -1,6 +1,7 @@
 package dev.khbd.interp4j.intellij.inspection;
 
 import dev.khbd.interp4j.intellij.BaseIntellijTest;
+import dev.khbd.interp4j.intellij.inspection.validate.InterpolateMethodInvocationInspection;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
