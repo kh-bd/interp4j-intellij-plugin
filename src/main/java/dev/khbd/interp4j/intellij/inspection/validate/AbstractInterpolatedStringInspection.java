@@ -1,6 +1,5 @@
 package dev.khbd.interp4j.intellij.inspection.validate;
 
-import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -203,8 +202,8 @@ public abstract class AbstractInterpolatedStringInspection<E> extends LocalInspe
         }
 
         @Override
-        public IntentionPreviewInfo generatePreview(Project project, ProblemDescriptor previewDescriptor) {
-            return IntentionPreviewInfo.EMPTY;
+        public boolean startInWriteAction() {
+            return false;
         }
     }
 
