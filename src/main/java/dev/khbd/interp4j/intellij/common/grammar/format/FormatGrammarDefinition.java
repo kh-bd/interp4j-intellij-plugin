@@ -11,6 +11,7 @@ import org.petitparser.tools.GrammarDefinition;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +51,9 @@ class FormatGrammarDefinition extends GrammarDefinition {
 
         // text
         def("text", noneOf("%").star());
-        action("text", listAsString().andThen(FormatText::new));
+        action("text", listAsString()
+                .andThen(replaceDoubleQuotes())
+                .andThen(FormatText::new));
 
         // specifier
         def("specifier",
@@ -150,6 +153,10 @@ class FormatGrammarDefinition extends GrammarDefinition {
                 .map(Objects::toString)
                 .collect(Collectors.joining(""));
 
+    }
+
+    private static UnaryOperator<String> replaceDoubleQuotes() {
+        return str -> str.replace("\"", "\\\"");
     }
 
     private record SpecifierAndText(FormatSpecifier specifier, FormatText text) {

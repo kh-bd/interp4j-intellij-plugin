@@ -24,6 +24,16 @@ public class FormatGrammarDefinitionTest {
     }
 
     @Test
+    public void parse_withDoubleQuotes_parse() {
+        Optional<FormatExpression> result = parser.parse("\"Hello!\"");
+
+        assertThat(result).hasValue(
+                new FormatExpression()
+                        .addPart(new FormatText("\\\"Hello!\\\""))
+        );
+    }
+
+    @Test
     public void parse_explicitArgumentIndexes_parse() {
         Optional<FormatExpression> result = parser.parse("%4$2s %3$2s %2$2s %1$2s");
 
