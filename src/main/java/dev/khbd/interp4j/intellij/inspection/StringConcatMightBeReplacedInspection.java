@@ -1,6 +1,5 @@
 package dev.khbd.interp4j.intellij.inspection;
 
-import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -15,10 +14,12 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiNameValuePair;
 import com.intellij.psi.PsiPolyadicExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
+import dev.khbd.interp4j.intellij.common.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +42,10 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
 
         @Override
         public void visitElement(PsiElement element) {
-            if (!(element instanceof PsiPolyadicExpression poly) || !isPlusExpression(poly)) {
+            if (!Interp4jPsiUtil.isInterpolationEnabled(element)
+                    || !(element instanceof PsiPolyadicExpression poly)
+                    || !isPlusExpression(poly)
+                    || element.getParent() instanceof PsiNameValuePair) {
                 return;
             }
 
@@ -107,10 +111,10 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
                 for (PsiExpression operand : poly.getOperands()) {
                     if (Interp4jPsiUtil.isStringLiteral(operand)) {
                         PsiLiteralExpression literal = (PsiLiteralExpression) operand;
-                        builder.append((String) literal.getValue());
+                        builder.append(StringUtils.escapeDoubleQuotes((String) literal.getValue()));
                     } else {
                         builder.append("${");
-                        builder.append(operand.getText());
+                        builder.append(StringUtils.escapeDoubleQuotes(operand.getText()));
                         builder.append("}");
                     }
                 }
@@ -119,10 +123,10 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
             }
 
             @Override
-            @NotNull
-            public IntentionPreviewInfo generatePreview(Project project, ProblemDescriptor problem) {
-                return IntentionPreviewInfo.EMPTY;
+            public boolean startInWriteAction() {
+                return false;
             }
+
         }
 
     }

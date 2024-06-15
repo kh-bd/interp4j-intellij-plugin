@@ -106,7 +106,7 @@ class FormatGrammarDefinition extends GrammarDefinition {
     }
 
     private static Parser implicitIndex() {
-        return character('<').map(it -> new ImplicitIndex());
+        return character('<').map(it -> ImplicitIndex.INSTANCE);
     }
 
     private static Parser conversion() {

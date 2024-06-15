@@ -5,5 +5,7 @@ package dev.khbd.interp4j.intellij.common.grammar.format;
  *
  * @author Sergei_Khadanovich
  */
-public record ImplicitIndex() implements Index {
+public enum ImplicitIndex implements Index {
+
+    INSTANCE
 }

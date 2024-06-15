@@ -1,4 +1,4 @@
-package dev.khbd.interp4j.intellij.inspection;
+package dev.khbd.interp4j.intellij.inspection.validate;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;

@@ -44,7 +44,11 @@ public class FormatExpression {
     public void visit(FormatExpressionVisitor visitor) {
         visitor.start();
         for (FormatExpressionPart part : parts) {
-            visitor.visitPart(part);
+            if (part instanceof FormatSpecifier specifier) {
+                visitor.visitSpecifier(specifier);
+            } else if (part instanceof FormatText text) {
+                visitor.visitText(text);
+            }
         }
         visitor.finish();
     }

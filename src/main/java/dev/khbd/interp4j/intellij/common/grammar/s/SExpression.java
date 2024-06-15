@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,7 +11,7 @@ import java.util.List;
  */
 @ToString
 @EqualsAndHashCode
-public class SExpression implements Iterable<SExpressionPart> {
+public class SExpression  {
 
     private final List<SExpressionPart> parts;
 
@@ -38,25 +37,4 @@ public class SExpression implements Iterable<SExpressionPart> {
         visitor.finish();
     }
 
-    @Override
-    public Iterator<SExpressionPart> iterator() {
-        // Don't use ArrayList#iterator, because underling implementation supports
-        // Iterator#remove, but our structure is immutable from outside
-        Iterator<SExpressionPart> iterator = parts.iterator();
-        return new Iterator<>() {
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public SExpressionPart next() {
-                return iterator.next();
-            }
-        };
-    }
-
-    public boolean hasAnyCode() {
-        return parts.stream().anyMatch(part -> part instanceof SCode);
-    }
 }

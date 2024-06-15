@@ -1,0 +1,45 @@
+<html>
+<body>
+<p>
+    This inspection reports when the <code>Interpolations#fmt</code> function is used with
+    wrong string value. Only string literal value or concatenation of string literals are supported at this place.
+</p>
+<p>
+<pre><code>
+    // incorrect
+    class Foo {
+        void foo() {
+            var result = Interpolations.fmt(null);
+        }
+    }
+
+    // incorrect
+    class Foo {
+        void foo() {
+            var tmp = "template";
+            var result = Interpolations.fmt(tmp);
+        }
+    }
+</code></pre>
+</p>
+<p>
+<pre><code>
+    // correct
+    class Foo {
+        void foo() {
+            var name = "Alex";
+            var result = Interpolations.fmt("Hello %s${name}");
+        }
+    }
+
+    // correct
+    class Foo {
+        void foo() {
+            var result = Interpolations.fmt("hello, " + "%s$name");
+        }
+    }
+
+</code></pre>
+</p>
+</body>
+</html>

@@ -16,9 +16,22 @@
                 groupKey="inspections"
                 groupPath="Java"
                 bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
-                key="inspection.interpolated.string"
-                shortName="InterpolatedStringInspection"
-                implementationClass="dev.khbd.interp4j.intellij.inspection.InterpolatedStringInspection"/>
+
+                key="inspection.interpolated.string.s"
+                shortName="SInterpolatorInspection"
+                implementationClass="dev.khbd.interp4j.intellij.inspection.validate.SInterpolatedStringInspectionImpl"/>
+        <localInspection
+                language="JAVA"
+                enabledByDefault="true"
+                level="ERROR"
+                groupBundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                groupKey="inspections"
+                groupPath="Java"
+                bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
+                key="inspection.interpolated.string.fmt"
+                shortName="FmtInterpolatorInspection"
+                implementationClass="dev.khbd.interp4j.intellij.inspection.validate.FmtInterpolatedStringInspectionImpl"/>
+
         <localInspection
                 language="JAVA"
                 enabledByDefault="true"
@@ -29,7 +42,7 @@
                 bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
                 key="inspection.interpolate.method.invocation"
                 shortName="InterpolateMethodInvocationInspection"
-                implementationClass="dev.khbd.interp4j.intellij.inspection.InterpolateMethodInvocationInspection"/>
+                implementationClass="dev.khbd.interp4j.intellij.inspection.validate.InterpolateMethodInvocationInspection"/>
         <localInspection
                 language="JAVA"
                 enabledByDefault="true"
@@ -53,8 +66,10 @@
                 shortName="StringConcatMightBeReplacedInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.StringConcatMightBeReplacedInspection"/>
 
-        <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.InterpolatedStringLanguageInjector"/>
-        <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.LocalVariableInStringLiteralsImplicitUsageProvider"/>
+        <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.SInterpolationLanguageInjector"/>
+        <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.FmtInterpolationLanguageInjector"/>
+
+        <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.InStringLiteralsImplicitUsageProvider"/>
     </extensions>
 
 </idea-plugin>

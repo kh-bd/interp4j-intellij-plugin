@@ -1,4 +1,34 @@
 <html>
+<h2>0.1.16</h2>
+<ul>
+    <li>Feature: Support <code>fmt()</code> interpolator.</li>
+</ul>
+<h2>0.1.15</h2>
+<ul>
+    <li>Bugfix: Double quotes are escaped during StringConcat quick fix so that the resulted expression remains valid.</li>
+</ul>
+<h2>0.1.14</h2>
+<ul>
+    <li>Bugfix: do implicit element search under progress indicator.</li>
+</ul>
+<h2>0.1.12</h2>
+<ul>
+    <li>StringConcat and StringFormat replacing inspections are enabled only
+        if <code>Interpolations.s</code> function is in path.</li>
+    <li>Method arguments and static fields are highlighted properly when they are used in string interpolation</li>
+</ul>
+<h2>0.1.9</h2>
+<ul>
+    <li><a href="https://github.com/kh-bd/interp4j-intellij-plugin/issues/28">Bugfix</a>:
+        String concatenations in annotations are not highlighted
+    </li>
+</ul>
+<h2>0.1.8</h2>
+<ul>
+   <li><a href="https://github.com/kh-bd/interp4j-intellij-plugin/issues/26">Bugfix</a>: <code>String.format</code>
+       can be automatically replaced if string concatenation is used in place of format literal.
+   </li>
+</ul>
 <h2>0.1.7</h2>
 <ul>
     <li>Quick fix to automatically rewrite string concatenation expression to
