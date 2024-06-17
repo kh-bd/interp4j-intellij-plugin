@@ -16,7 +16,6 @@
                 groupKey="inspections"
                 groupPath="Java"
                 bundle="dev.khbd.interp4j.intellij.messages.Interp4jBundle"
-
                 key="inspection.interpolated.string.s"
                 shortName="SInterpolatorInspection"
                 implementationClass="dev.khbd.interp4j.intellij.inspection.validate.SInterpolatedStringInspectionImpl"/>
@@ -70,6 +69,9 @@
         <multiHostInjector implementation="dev.khbd.interp4j.intellij.language.FmtInterpolationLanguageInjector"/>
 
         <implicitUsageProvider implementation="dev.khbd.interp4j.intellij.usage.InStringLiteralsImplicitUsageProvider"/>
+
+        <lang.inspectionSuppressor language="JAVA" implementationClass="dev.khbd.interp4j.intellij.inspection.suppressor.UnreachableCodeInspectionSuppressor"/>
+
     </extensions>
 
 </idea-plugin>
