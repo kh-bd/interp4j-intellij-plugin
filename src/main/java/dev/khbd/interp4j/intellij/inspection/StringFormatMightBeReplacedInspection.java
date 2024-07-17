@@ -20,6 +20,7 @@ import com.intellij.psi.PsiPolyadicExpression;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import dev.khbd.interp4j.intellij.Interp4jBundle;
 import dev.khbd.interp4j.intellij.common.Interp4jPsiUtil;
+import dev.khbd.interp4j.intellij.common.StringUtils;
 import dev.khbd.interp4j.intellij.common.grammar.format.FormatExpression;
 import dev.khbd.interp4j.intellij.common.grammar.format.FormatExpressionParser;
 import dev.khbd.interp4j.intellij.common.grammar.format.FormatExpressionVisitor;
@@ -204,7 +205,7 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
                 PsiExpression expression = arguments.getExpressions()[index];
 
                 builder.append("${");
-                builder.append(expression.getText());
+                builder.append(StringUtils.escapeDoubleQuotes(expression.getText()));
                 builder.append("}");
 
                 seenSpecifiersCount += 1;

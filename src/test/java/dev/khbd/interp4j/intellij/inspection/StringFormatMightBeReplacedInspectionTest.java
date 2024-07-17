@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Sergei_Khadanovich
  */
-public class StringFormatInspectionTest extends BaseIntellijTest {
+public class StringFormatMightBeReplacedInspectionTest extends BaseIntellijTest {
 
     @BeforeMethod
     public void initInspection() {
@@ -103,6 +103,17 @@ public class StringFormatInspectionTest extends BaseIntellijTest {
         fixture.configureByFiles("inspection/format/with_concatenation/wrong_argument_count/Main.java");
 
         fixture.testHighlighting(true, false, true);
+    }
+
+    @Test
+    public void inspect_expressionWithDoubleQuotes_warnUsage() {
+        fixture.configureByFiles("inspection/format/expression_with_double_quotes/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(1);
+        launchActions(intentions);
+        fixture.checkResultByFile("inspection/format/expression_with_double_quotes/Main_after.java");
     }
 
 }
