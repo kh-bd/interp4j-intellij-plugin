@@ -30,10 +30,10 @@ import java.util.Objects;
 public class Interp4jPsiUtil {
 
     /**
-     * Check if {@link Interpolations#s} function is in scope.
+     * Check if {@link Interpolations} class is in scope.
      *
      * @param element psi element
-     * @return {@literal true} if function is in scope and {@literal false} otherwise
+     * @return {@literal true} if class is in scope and {@literal false} otherwise
      */
     public static boolean isInterpolationEnabled(PsiElement element) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(element.getProject());
@@ -42,6 +42,25 @@ public class Interp4jPsiUtil {
                 .findClass(Interpolations.class.getCanonicalName(), scope);
 
         return Objects.nonNull(psiClass);
+    }
+
+    /**
+     * Check if {@link Interpolations#fmt} function is in scope.
+     *
+     * @param element psi element
+     * @return {@literal true} if function is in scope and {@literal false} otherwise
+     */
+    public static boolean isFmtFunctionAvailable(PsiElement element) {
+        GlobalSearchScope scope = GlobalSearchScope.allScope(element.getProject());
+
+        PsiClass psiClass = JavaPsiFacade.getInstance(element.getProject())
+                .findClass(Interpolations.class.getCanonicalName(), scope);
+
+        if (psiClass == null) {
+            return false;
+        }
+
+        return psiClass.findMethodsByName("fmt").length != 0;
     }
 
     /**

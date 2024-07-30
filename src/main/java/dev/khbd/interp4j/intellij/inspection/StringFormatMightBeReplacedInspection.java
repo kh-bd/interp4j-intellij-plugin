@@ -94,7 +94,7 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
                 );
             }
 
-            if (!simplicityChecker.hasIndexedSpecifier()) {
+            if (!simplicityChecker.hasIndexedSpecifier() && Interp4jPsiUtil.isFmtFunctionAvailable(methodCall)) {
                 holder.registerProblem(
                         methodCall,
                         Interp4jBundle.getMessage("inspection.string.format.usage.might.be.replaced.by.interpolation.fmt"),
