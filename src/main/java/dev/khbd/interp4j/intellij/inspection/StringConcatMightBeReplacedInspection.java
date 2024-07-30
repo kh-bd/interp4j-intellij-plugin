@@ -93,7 +93,7 @@ public class StringConcatMightBeReplacedInspection extends LocalInspectionTool {
                 WriteCommandAction.runWriteCommandAction(project, null, null, () -> {
                     poly.replace(sMethodCall);
 
-                    Interp4jPsiUtil.addSImport(project, file);
+                    Interp4jPsiUtil.addImport(project, file, "s");
                     JavaCodeStyleManager.getInstance(project).optimizeImports(file);
 
                     UndoUtil.markPsiFileForUndo(file);

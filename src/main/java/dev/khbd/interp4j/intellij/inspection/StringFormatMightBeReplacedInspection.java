@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author Sergei_Khadanovich
@@ -50,8 +51,8 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
         @Override
         public void visitElement(@NotNull PsiElement element) {
             if (!Interp4jPsiUtil.isInterpolationEnabled(element)
-                    || !(element instanceof PsiMethodCallExpression methodCall)
-                    || !Interp4jPsiUtil.isStringFormatCall(methodCall)) {
+                || !(element instanceof PsiMethodCallExpression methodCall)
+                || !Interp4jPsiUtil.isStringFormatCall(methodCall)) {
                 return;
             }
 
@@ -75,19 +76,32 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
                 return;
             }
 
-            if (!isSimpleEnough(parsedExpression)
-                    || parsedExpression.specifiersCount() != arguments.getExpressionCount() - 1) {
-                // expression is too complicated to rewrite it or
-                // arguments count is wrong
+            if (parsedExpression.specifiersCount() != arguments.getExpressionCount() - 1) {
+                // specifiers count is not the same as arguments count.
+                // no way to replace with interpolation
                 return;
             }
 
-            holder.registerProblem(
-                    methodCall,
-                    Interp4jBundle.getMessage("inspection.string.format.usage.might.be.replaced.by.interpolation"),
-                    ProblemHighlightType.WEAK_WARNING,
-                    new ReplaceOnStringInterpolationLocalQuickFix(parsedExpression)
-            );
+            ExpressionSimplicityChecker simplicityChecker = new ExpressionSimplicityChecker();
+            parsedExpression.visit(simplicityChecker);
+
+            if (simplicityChecker.isSimpleEnough()) {
+                holder.registerProblem(
+                        methodCall,
+                        Interp4jBundle.getMessage("inspection.string.format.usage.might.be.replaced.by.interpolation.s"),
+                        ProblemHighlightType.WEAK_WARNING,
+                        new ReplaceOnSInterpolationLocalQuickFix(parsedExpression)
+                );
+            }
+
+            if (!simplicityChecker.hasIndexedSpecifier()) {
+                holder.registerProblem(
+                        methodCall,
+                        Interp4jBundle.getMessage("inspection.string.format.usage.might.be.replaced.by.interpolation.fmt"),
+                        ProblemHighlightType.WEAK_WARNING,
+                        new ReplaceOnFmtInterpolationLocalQuickFix(parsedExpression)
+                );
+            }
         }
 
         private String getStringLiteralText(PsiExpression expression) {
@@ -111,12 +125,6 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
             return true;
         }
 
-        private boolean isSimpleEnough(FormatExpression expression) {
-            ExpressionSimplicityChecker checker = new ExpressionSimplicityChecker();
-            expression.visit(checker);
-            return checker.isSimpleEnough();
-        }
-
         private static final class ExpressionSimplicityChecker implements FormatExpressionVisitor {
 
             private static final List<String> ALLOWED_CONVERSIONS = List.of(
@@ -124,32 +132,85 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
             );
 
             private boolean simple = true;
+            private boolean hasIndexedSpecifier = false;
 
             @Override
             public void visitSpecifier(FormatSpecifier specifier) {
                 if (specifier.index() != null
-                        || specifier.flags() != null
-                        || specifier.width() != null
-                        || specifier.precision() != null
-                        || !ALLOWED_CONVERSIONS.contains(specifier.conversion().symbols())) {
+                    || specifier.flags() != null
+                    || specifier.width() != null
+                    || specifier.precision() != null
+                    || !ALLOWED_CONVERSIONS.contains(specifier.conversion().symbols())) {
                     simple = false;
+                }
+                if (specifier.index() != null) {
+                    hasIndexedSpecifier = true;
                 }
             }
 
             boolean isSimpleEnough() {
                 return simple;
             }
+
+            boolean hasIndexedSpecifier() {
+                return hasIndexedSpecifier;
+            }
         }
 
-        @RequiredArgsConstructor
-        private static class ReplaceOnStringInterpolationLocalQuickFix implements LocalQuickFix {
+        /**
+         * Quick fix to replace on `fmt` method call.
+         */
+        private static final class ReplaceOnFmtInterpolationLocalQuickFix extends AbstractReplaceOnStringInterpolationLocalQuickFix {
 
-            private final FormatExpression expression;
+            ReplaceOnFmtInterpolationLocalQuickFix(FormatExpression expression) {
+                super(expression);
+            }
 
             @Override
             public String getFamilyName() {
-                return Interp4jBundle.getMessage("inspection.string.format.usage.replace");
+                return Interp4jBundle.getMessage("inspection.string.format.usage.replace.fmt");
             }
+
+            @Override
+            protected InterpolationMethodCallBuildingStrategy createMethodCallBuildingStrategy(PsiExpressionList arguments) {
+                return new InterpolationMethodCallBuildingStrategyImpl(arguments, "fmt", FormatSpecifier::toString);
+            }
+
+            @Override
+            protected void addImport(Project project, PsiJavaFile file) {
+                Interp4jPsiUtil.addImport(project, file, "fmt");
+            }
+        }
+
+        /**
+         * Quick fix to replace on `s` method call.
+         */
+        private static final class ReplaceOnSInterpolationLocalQuickFix extends AbstractReplaceOnStringInterpolationLocalQuickFix {
+
+            ReplaceOnSInterpolationLocalQuickFix(FormatExpression expression) {
+                super(expression);
+            }
+
+            @Override
+            public String getFamilyName() {
+                return Interp4jBundle.getMessage("inspection.string.format.usage.replace.s");
+            }
+
+            @Override
+            protected InterpolationMethodCallBuildingStrategy createMethodCallBuildingStrategy(PsiExpressionList arguments) {
+                return new InterpolationMethodCallBuildingStrategyImpl(arguments, "s", __ -> "");
+            }
+
+            @Override
+            protected void addImport(Project project, PsiJavaFile file) {
+                Interp4jPsiUtil.addImport(project, file, "s");
+            }
+        }
+
+        @RequiredArgsConstructor
+        private abstract static class AbstractReplaceOnStringInterpolationLocalQuickFix implements LocalQuickFix {
+
+            private final FormatExpression expression;
 
             @Override
             public boolean startInWriteAction() {
@@ -161,35 +222,52 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
                 PsiMethodCallExpression methodCall = (PsiMethodCallExpression) descriptor.getPsiElement();
                 PsiJavaFile file = (PsiJavaFile) methodCall.getContainingFile();
 
-                SMethodCallBuilder builder = new SMethodCallBuilder(methodCall.getArgumentList());
+                InterpolationMethodCallBuildingStrategy builder = createMethodCallBuildingStrategy(methodCall.getArgumentList());
                 expression.visit(builder);
 
                 PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
-                PsiExpression sMethodCall = factory.createExpressionFromText(builder.getSMethodCallAsString(), methodCall.getContext());
+                PsiExpression interpolationCall = factory.createExpressionFromText(builder.getMethodCallAsString(), methodCall.getContext());
 
                 WriteCommandAction.runWriteCommandAction(project, null, null, () -> {
-                    methodCall.replace(sMethodCall);
+                    methodCall.replace(interpolationCall);
 
-                    Interp4jPsiUtil.addSImport(project, file);
+                    addImport(project, file);
                     JavaCodeStyleManager.getInstance(project).optimizeImports(file);
 
                     UndoUtil.markPsiFileForUndo(file);
                 }, file);
             }
+
+            protected abstract InterpolationMethodCallBuildingStrategy createMethodCallBuildingStrategy(PsiExpressionList arguments);
+
+            /**
+             * Add interpolation function import statement.
+             */
+            protected abstract void addImport(Project project, PsiJavaFile file);
+        }
+
+        interface InterpolationMethodCallBuildingStrategy extends FormatExpressionVisitor {
+
+            /**
+             * Return built interpolation method call as simple string.
+             */
+            String getMethodCallAsString();
         }
 
         @RequiredArgsConstructor
-        private static class SMethodCallBuilder implements FormatExpressionVisitor {
+        private static class InterpolationMethodCallBuildingStrategyImpl implements InterpolationMethodCallBuildingStrategy {
 
             private final PsiExpressionList arguments;
+            private final String methodName;
+            private final Function<FormatSpecifier, String> specifierFormatter;
 
             private final StringBuilder builder = new StringBuilder();
-
             private int seenSpecifiersCount = 0;
 
             @Override
             public void start() {
-                builder.append("s(");
+                builder.append(methodName);
+                builder.append("(");
             }
 
             @Override
@@ -204,6 +282,7 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
                 PsiExpression expression = arguments.getExpressions()[index];
 
+                builder.append(specifierFormatter.apply(specifier));
                 builder.append("${");
                 builder.append(StringUtils.escapeDoubleQuotes(expression.getText()));
                 builder.append("}");
@@ -216,7 +295,8 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
                 builder.append(")");
             }
 
-            String getSMethodCallAsString() {
+            @Override
+            public String getMethodCallAsString() {
                 return builder.toString();
             }
         }

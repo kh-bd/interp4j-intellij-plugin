@@ -166,7 +166,7 @@ public class Interp4jPsiUtil {
      * @param project project
      * @param file    java file
      */
-    public static void addSImport(@NonNull Project project, @NonNull PsiJavaFile file) {
+    public static void addImport(@NonNull Project project, @NonNull PsiJavaFile file, @NonNull String methodName) {
         PsiClass interpolationsClass = JavaPsiFacade.getInstance(project)
                 .findClass(Interpolations.class.getCanonicalName(), GlobalSearchScope.allScope(project));
 
@@ -175,10 +175,10 @@ public class Interp4jPsiUtil {
         }
 
         PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
-        PsiImportStaticStatement sImport = factory.createImportStaticStatement(interpolationsClass, "s");
+        PsiImportStaticStatement importStatement = factory.createImportStaticStatement(interpolationsClass, methodName);
 
         PsiImportList imports = file.getImportList();
         // imports can not be null, because user is modifying source file, not compiled file
-        imports.add(sImport);
+        imports.add(importStatement);
     }
 }
