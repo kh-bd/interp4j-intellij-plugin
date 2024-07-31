@@ -173,12 +173,12 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
             @Override
             protected InterpolationMethodCallBuildingStrategy createMethodCallBuildingStrategy(PsiExpressionList arguments) {
-                return new InterpolationMethodCallBuildingStrategyImpl(arguments, "fmt", FormatSpecifier::toString);
+                return new InterpolationMethodCallBuildingStrategyImpl(arguments, Interp4jPsiUtil.FMT, FormatSpecifier::toString);
             }
 
             @Override
             protected void addImport(Project project, PsiJavaFile file) {
-                Interp4jPsiUtil.addImport(project, file, "fmt");
+                Interp4jPsiUtil.addFmtImport(project, file);
             }
         }
 
@@ -198,12 +198,12 @@ public class StringFormatMightBeReplacedInspection extends LocalInspectionTool {
 
             @Override
             protected InterpolationMethodCallBuildingStrategy createMethodCallBuildingStrategy(PsiExpressionList arguments) {
-                return new InterpolationMethodCallBuildingStrategyImpl(arguments, "s", __ -> "");
+                return new InterpolationMethodCallBuildingStrategyImpl(arguments, Interp4jPsiUtil.S, __ -> "");
             }
 
             @Override
             protected void addImport(Project project, PsiJavaFile file) {
-                Interp4jPsiUtil.addImport(project, file, "s");
+                Interp4jPsiUtil.addSImport(project, file);
             }
         }
 

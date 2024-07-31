@@ -29,6 +29,9 @@ import java.util.Objects;
 @UtilityClass
 public class Interp4jPsiUtil {
 
+    public static final String S = "s";
+    public static final String FMT = "fmt";
+
     /**
      * Check if {@link Interpolations} class is in scope.
      *
@@ -60,7 +63,7 @@ public class Interp4jPsiUtil {
             return false;
         }
 
-        return psiClass.findMethodsByName("fmt").length != 0;
+        return psiClass.findMethodsByName(FMT).length != 0;
     }
 
     /**
@@ -70,7 +73,7 @@ public class Interp4jPsiUtil {
      * @return {@literal true} if it is a 's' method call and {@literal false} otherwise
      */
     public static boolean isSMethodCall(@NonNull PsiMethodCallExpression methodCall) {
-        return isInterpolatorCall(methodCall, "s");
+        return isInterpolatorCall(methodCall, S);
     }
 
     /**
@@ -80,7 +83,7 @@ public class Interp4jPsiUtil {
      * @return {@literal true} if it is a 'fmt' method call and {@literal false} otherwise
      */
     public static boolean isFmtMethodCall(@NonNull PsiMethodCallExpression methodCall) {
-        return isInterpolatorCall(methodCall, "fmt");
+        return isInterpolatorCall(methodCall, FMT);
     }
 
     private static boolean isInterpolatorCall(@NonNull PsiMethodCallExpression methodCall, @NonNull String methodName) {
@@ -185,7 +188,21 @@ public class Interp4jPsiUtil {
      * @param project project
      * @param file    java file
      */
-    public static void addImport(@NonNull Project project, @NonNull PsiJavaFile file, @NonNull String methodName) {
+    public static void addSImport(@NonNull Project project, @NonNull PsiJavaFile file) {
+        addImport(project, file, S);
+    }
+
+    /**
+     * Add static import for {@link Interpolations#fmt} function.
+     *
+     * @param project project
+     * @param file    java file
+     */
+    public static void addFmtImport(@NonNull Project project, @NonNull PsiJavaFile file) {
+        addImport(project, file, FMT);
+    }
+
+    private static void addImport(@NonNull Project project, @NonNull PsiJavaFile file, @NonNull String methodName) {
         PsiClass interpolationsClass = JavaPsiFacade.getInstance(project)
                 .findClass(Interpolations.class.getCanonicalName(), GlobalSearchScope.allScope(project));
 

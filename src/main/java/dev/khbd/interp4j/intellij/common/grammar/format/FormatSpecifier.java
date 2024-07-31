@@ -1,7 +1,5 @@
 package dev.khbd.interp4j.intellij.common.grammar.format;
 
-import java.util.Objects;
-
 /**
  * Format specifier in format expression.
  *
@@ -23,16 +21,16 @@ public record FormatSpecifier(Index index, String flags, Integer width, Integer 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("%");
-        if (Objects.nonNull(index)) {
+        if (index != null) {
             builder.append(index);
         }
-        if (Objects.nonNull(flags)) {
+        if (flags != null) {
             builder.append(flags);
         }
-        if (Objects.nonNull(width)) {
+        if (width != null) {
             builder.append(width);
         }
-        if (Objects.nonNull(precision)) {
+        if (precision != null) {
             builder.append(".").append(precision);
         }
         builder.append(conversion.symbols());
