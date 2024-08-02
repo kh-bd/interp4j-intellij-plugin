@@ -20,14 +20,25 @@ public class StringFormatMightBeReplacedInspectionTest extends BaseIntellijTest 
     }
 
     @Test
-    public void inspect_simpleStringFormatDetected_warnUsage() {
+    public void inspect_simpleStringFormatDetectedAndReplaceWithS_warnUsage() {
         fixture.configureByFiles("inspection/format/only_string_conversions/Main.java");
 
         fixture.testHighlighting(true, false, true);
         List<IntentionAction> intentions = fixture.getAllQuickFixes();
-        assertThat(intentions).hasSize(1);
-        launchActions(intentions);
-        fixture.checkResultByFile("inspection/format/only_string_conversions/Main_after.java");
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`s`"));
+        fixture.checkResultByFile("inspection/format/only_string_conversions/Main_after_s.java");
+    }
+
+    @Test
+    public void inspect_simpleStringFormatDetectedAndReplaceWithFmt_warnUsage() {
+        fixture.configureByFiles("inspection/format/only_string_conversions/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`fmt`"));
+        fixture.checkResultByFile("inspection/format/only_string_conversions/Main_after_fmt.java");
     }
 
     @Test
@@ -45,14 +56,25 @@ public class StringFormatMightBeReplacedInspectionTest extends BaseIntellijTest 
     }
 
     @Test
-    public void inspect_withIntegerConversion_warnUsage() {
+    public void inspect_withIntegerConversionAndReplaceWithS_warnUsage() {
         fixture.configureByFiles("inspection/format/with_integer_conversion/Main.java");
 
         fixture.testHighlighting(true, false, true);
         List<IntentionAction> intentions = fixture.getAllQuickFixes();
-        assertThat(intentions).hasSize(1);
-        launchActions(intentions);
-        fixture.checkResultByFile("inspection/format/with_integer_conversion/Main_after.java");
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`s`"));
+        fixture.checkResultByFile("inspection/format/with_integer_conversion/Main_after_s.java");
+    }
+
+    @Test
+    public void inspect_withIntegerConversionAndReplaceWithFmt_warnUsage() {
+        fixture.configureByFiles("inspection/format/with_integer_conversion/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`fmt`"));
+        fixture.checkResultByFile("inspection/format/with_integer_conversion/Main_after_fmt.java");
     }
 
     @Test
@@ -63,25 +85,38 @@ public class StringFormatMightBeReplacedInspectionTest extends BaseIntellijTest 
     }
 
     @Test
-    public void inspect_withSimpleConcatenation_warnUsage() {
+    public void inspect_withSimpleConcatenationAndReplaceWithS_warnUsage() {
         fixture.configureByFiles("inspection/format/with_concatenation/simple_concat/Main.java");
 
         fixture.testHighlighting(true, false, true);
         List<IntentionAction> intentions = fixture.getAllQuickFixes();
-        assertThat(intentions).hasSize(1);
-        launchActions(intentions);
-        fixture.checkResultByFile("inspection/format/with_concatenation/simple_concat/Main_after.java");
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`s`"));
+
+        fixture.checkResultByFile("inspection/format/with_concatenation/simple_concat/Main_after_s.java");
     }
 
     @Test
-    public void inspect_withConcatenationWhereMoreThanTwoParts_warnUsage() {
+    public void inspect_withSimpleConcatenationAndReplaceWithFmt_warnUsage() {
+        fixture.configureByFiles("inspection/format/with_concatenation/simple_concat/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`fmt`"));
+
+        fixture.checkResultByFile("inspection/format/with_concatenation/simple_concat/Main_after_fmt.java");
+    }
+
+    @Test
+    public void inspect_withConcatenationWhereMoreThanTwoPartsAndReplaceWithS_warnUsage() {
         fixture.configureByFiles("inspection/format/with_concatenation/more_than_two_parts/Main.java");
 
         fixture.testHighlighting(true, false, true);
         List<IntentionAction> intentions = fixture.getAllQuickFixes();
-        assertThat(intentions).hasSize(1);
-        launchActions(intentions);
-        fixture.checkResultByFile("inspection/format/with_concatenation/more_than_two_parts/Main_after.java");
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`s`"));
+        fixture.checkResultByFile("inspection/format/with_concatenation/more_than_two_parts/Main_after_s.java");
     }
 
     @Test
@@ -106,14 +141,31 @@ public class StringFormatMightBeReplacedInspectionTest extends BaseIntellijTest 
     }
 
     @Test
-    public void inspect_expressionWithDoubleQuotes_warnUsage() {
+    public void inspect_expressionWithDoubleQuotesAndReplaceWithS_warnUsage() {
         fixture.configureByFiles("inspection/format/expression_with_double_quotes/Main.java");
 
         fixture.testHighlighting(true, false, true);
         List<IntentionAction> intentions = fixture.getAllQuickFixes();
-        assertThat(intentions).hasSize(1);
-        launchActions(intentions);
-        fixture.checkResultByFile("inspection/format/expression_with_double_quotes/Main_after.java");
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`s`"));
+        fixture.checkResultByFile("inspection/format/expression_with_double_quotes/Main_after_s.java");
     }
 
+    @Test
+    public void inspect_expressionWithDoubleQuotesAndReplaceWithFmt_warnUsage() {
+        fixture.configureByFiles("inspection/format/expression_with_double_quotes/Main.java");
+
+        fixture.testHighlighting(true, false, true);
+        List<IntentionAction> intentions = fixture.getAllQuickFixes();
+        assertThat(intentions).hasSize(2);
+        fixture.launchAction(findIntention(intentions, "`fmt`"));
+        fixture.checkResultByFile("inspection/format/expression_with_double_quotes/Main_after_fmt.java");
+    }
+
+    private IntentionAction findIntention(List<IntentionAction> intentions, String text) {
+        return intentions.stream()
+                .filter(in -> in.getText().contains(text))
+                .findFirst()
+                .orElse(null);
+    }
 }

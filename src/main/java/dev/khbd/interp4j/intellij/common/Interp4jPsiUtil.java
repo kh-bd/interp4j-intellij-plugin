@@ -29,11 +29,14 @@ import java.util.Objects;
 @UtilityClass
 public class Interp4jPsiUtil {
 
+    public static final String S = "s";
+    public static final String FMT = "fmt";
+
     /**
-     * Check if {@link Interpolations#s} function is in scope.
+     * Check if {@link Interpolations} class is in scope.
      *
      * @param element psi element
-     * @return {@literal true} if function is in scope and {@literal false} otherwise
+     * @return {@literal true} if class is in scope and {@literal false} otherwise
      */
     public static boolean isInterpolationEnabled(PsiElement element) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(element.getProject());
@@ -45,13 +48,32 @@ public class Interp4jPsiUtil {
     }
 
     /**
+     * Check if {@link Interpolations#fmt} function is in scope.
+     *
+     * @param element psi element
+     * @return {@literal true} if function is in scope and {@literal false} otherwise
+     */
+    public static boolean isFmtFunctionAvailable(PsiElement element) {
+        GlobalSearchScope scope = GlobalSearchScope.allScope(element.getProject());
+
+        PsiClass psiClass = JavaPsiFacade.getInstance(element.getProject())
+                .findClass(Interpolations.class.getCanonicalName(), scope);
+
+        if (psiClass == null) {
+            return false;
+        }
+
+        return psiClass.findMethodsByName(FMT).length != 0;
+    }
+
+    /**
      * Check is supplied method call a 's' method call.
      *
      * @param methodCall method call
      * @return {@literal true} if it is a 's' method call and {@literal false} otherwise
      */
     public static boolean isSMethodCall(@NonNull PsiMethodCallExpression methodCall) {
-        return isInterpolatorCall(methodCall, "s");
+        return isInterpolatorCall(methodCall, S);
     }
 
     /**
@@ -61,7 +83,7 @@ public class Interp4jPsiUtil {
      * @return {@literal true} if it is a 'fmt' method call and {@literal false} otherwise
      */
     public static boolean isFmtMethodCall(@NonNull PsiMethodCallExpression methodCall) {
-        return isInterpolatorCall(methodCall, "fmt");
+        return isInterpolatorCall(methodCall, FMT);
     }
 
     private static boolean isInterpolatorCall(@NonNull PsiMethodCallExpression methodCall, @NonNull String methodName) {
@@ -167,6 +189,20 @@ public class Interp4jPsiUtil {
      * @param file    java file
      */
     public static void addSImport(@NonNull Project project, @NonNull PsiJavaFile file) {
+        addImport(project, file, S);
+    }
+
+    /**
+     * Add static import for {@link Interpolations#fmt} function.
+     *
+     * @param project project
+     * @param file    java file
+     */
+    public static void addFmtImport(@NonNull Project project, @NonNull PsiJavaFile file) {
+        addImport(project, file, FMT);
+    }
+
+    private static void addImport(@NonNull Project project, @NonNull PsiJavaFile file, @NonNull String methodName) {
         PsiClass interpolationsClass = JavaPsiFacade.getInstance(project)
                 .findClass(Interpolations.class.getCanonicalName(), GlobalSearchScope.allScope(project));
 
@@ -175,10 +211,10 @@ public class Interp4jPsiUtil {
         }
 
         PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
-        PsiImportStaticStatement sImport = factory.createImportStaticStatement(interpolationsClass, "s");
+        PsiImportStaticStatement importStatement = factory.createImportStaticStatement(interpolationsClass, methodName);
 
         PsiImportList imports = file.getImportList();
         // imports can not be null, because user is modifying source file, not compiled file
-        imports.add(sImport);
+        imports.add(importStatement);
     }
 }
