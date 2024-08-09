@@ -2,15 +2,15 @@ package dev.khbd.interp4j.intellij.inspection;
 
 import dev.khbd.interp4j.intellij.BaseIntellijTest;
 import dev.khbd.interp4j.intellij.inspection.validate.InterpolateMethodInvocationInspection;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Sergei_Khadanovich
  */
 public class InterpolateMethodInvocationInspectionTest extends BaseIntellijTest {
 
-    @BeforeMethod
+    @BeforeEach
     public void initInspection() {
         fixture.enableInspections(InterpolateMethodInvocationInspection.class);
     }

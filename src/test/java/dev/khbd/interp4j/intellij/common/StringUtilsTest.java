@@ -2,7 +2,7 @@ package dev.khbd.interp4j.intellij.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Sergei Khadanovich

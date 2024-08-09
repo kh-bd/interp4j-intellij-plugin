@@ -14,8 +14,8 @@ import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -29,8 +29,8 @@ public abstract class BaseIntellijTest {
 
     protected JavaCodeInsightTestFixture fixture;
 
-    @BeforeMethod
-    public void beforeMethod() throws Exception {
+    @BeforeEach
+    public void beforeEach() throws Exception {
         IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
         TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
                 factory.createLightFixtureBuilder(getProjectDescriptor(), "interp4j");
@@ -50,8 +50,8 @@ public abstract class BaseIntellijTest {
         Interp4jTestUtil.loadLibrary(fixture.getProjectDisposable(), fixture.getModule(), "petitparser-core", "petitparser-core.jar");
     }
 
-    @AfterMethod
-    public void afterMethod() throws Exception {
+    @AfterEach
+    public void afterEach() throws Exception {
         try {
             fixture.tearDown();
         } finally {

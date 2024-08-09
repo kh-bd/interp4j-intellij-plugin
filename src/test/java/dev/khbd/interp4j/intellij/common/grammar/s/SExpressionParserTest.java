@@ -2,7 +2,7 @@ package dev.khbd.interp4j.intellij.common.grammar.s;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 

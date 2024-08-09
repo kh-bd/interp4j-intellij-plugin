@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import dev.khbd.interp4j.intellij.BaseIntellijTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class StringFormatMightBeReplacedInspectionTest extends BaseIntellijTest {
 
-    @BeforeMethod
+    @BeforeEach
     public void initInspection() {
         fixture.enableInspections(StringFormatMightBeReplacedInspection.class);
     }
