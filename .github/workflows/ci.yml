@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        intellijVersion: [ 2023.2, 2023.3, 2024.1, 2024.2 ]
+        intellijVersion: [ 2023.2, 2023.3, 2024.1, 2024.2, LATEST-EAP-SNAPSHOT ]
     runs-on: ubuntu-latest
     name: 'Testing with INTELLIJ ${{ matrix.intellijVersion }}'
     env:
