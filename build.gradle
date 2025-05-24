@@ -1,7 +1,9 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
     id 'java'
     id "io.freefair.lombok" version "6.2.0"
-    id 'org.jetbrains.intellij' version '1.16.1'
+    id 'org.jetbrains.intellij.platform' version '2.6.0'
 }
 
 group 'dev.khbd.interp4j'
@@ -12,6 +14,10 @@ targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
@@ -20,11 +26,14 @@ dependencies {
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.11.0-M2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
-}
 
-intellij {
-    version = intellijVersion()
-    plugins = ['com.intellij.java']
+    intellijPlatform {
+        intellijIdeaCommunity(intellijVersion())
+
+        bundledPlugin "com.intellij.java"
+
+        testFramework TestFrameworkType.Platform.INSTANCE
+    }
 }
 
 def intellijVersion() {

@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import com.intellij.util.PathUtil;
 import lombok.experimental.UtilityClass;
 
@@ -52,7 +51,7 @@ public class Interp4jTestUtil {
         PsiTestUtil.addLibrary(disposable, module, libName, libPath, jarName);
     }
 
-    private static class ProjectDescriptor extends DefaultLightProjectDescriptor {
+    private static class ProjectDescriptor extends LightProjectDescriptor {
 
         private final LanguageLevel languageLeveL;
 
