@@ -2,7 +2,7 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id 'java'
-    id "io.freefair.lombok" version "6.2.0"
+    id "io.freefair.lombok" version "9.5.0"
     id 'org.jetbrains.intellij.platform' version '2.6.0'
 }
 
